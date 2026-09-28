@@ -72,7 +72,7 @@ export const LaunchModal: React.FC<LaunchModalProps> = ({ isOpen, onClose }) => 
           </div>
         ) : (
           <div className="text-center py-6">
-            <div className="w-14 h-14 rounded-full bg-[#B8FF00]/10 border border-[#B8FF00]/30 text-[#B8FF00] flex items-center justify-center mx-auto mb-4">
+            <div className="w-14 h-14 rounded-2xl bg-[#B8FF00]/10 border border-[#B8FF00]/30 text-[#B8FF00] flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <h3 className="text-2xl font-bold font-heading text-white">

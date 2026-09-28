@@ -42,7 +42,7 @@ export default function App() {
         {/* 2. Comissão Clara - Bloco horizontal 16:9 */}
         <ComissaoMotorista />
 
-        {/* 3. Modalidades (POP • BLACK • GUARD com transição sticky no scroll) */}
+        {/* 3. Modalidades: POP, BLACK e GUARD */}
         <Modalities />
 
         {/* 4. CTA Final */}

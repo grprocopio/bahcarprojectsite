@@ -38,7 +38,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
         <div className="space-y-3">
           {/* WhatsApp Oficial */}
           <a
-            href="https://wa.me/5555999999999?text=Ol%C3%A1!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20BahCar."
+            href="https://wa.me/5555991082555"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-3 p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#B8FF00]/40 rounded-xl transition-all group"
@@ -51,14 +51,14 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
             <div>
               <div className="text-xs text-neutral-400">WhatsApp oficial</div>
               <div className="text-sm font-medium text-white group-hover:text-[#B8FF00] transition-colors">
-                Iniciar conversa no WhatsApp
+                (55) 99108-2555
               </div>
             </div>
           </a>
 
           {/* Instagram Oficial */}
           <a
-            href="https://instagram.com/bahcar.sm"
+            href="https://www.instagram.com/bahcarsm/"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-3 p-3.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#B8FF00]/40 rounded-xl transition-all group"
@@ -81,7 +81,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
             <div>
               <div className="text-xs text-neutral-400">Instagram oficial</div>
               <div className="text-sm font-medium text-white group-hover:text-[#B8FF00] transition-colors">
-                @bahcar.sm
+                @bahcarsm
               </div>
             </div>
           </a>
