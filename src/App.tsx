@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { PitStopBah } from './components/PitStopBah';
 import { Modalities } from './components/Modalities';
 import { FinalCta } from './components/FinalCta';
 import { Footer } from './components/Footer';
@@ -27,10 +26,9 @@ export default function App() {
       {/* 
         Estrutura Oficial da Landing:
         1. Hero com vídeo
-        2. PIT STOP Bah
-        3. Modalidades
-        4. CTA final
-        5. Footer
+        2. Modalidades
+        3. CTA final
+        4. Footer
       */}
       <main>
         {/* 1. Hero com vídeo (scroll scrubbed GSAP ScrollTrigger) */}
@@ -40,10 +38,7 @@ export default function App() {
           hlsStreamUrl={import.meta.env.VITE_HLS_STREAM_URL}
         />
 
-        {/* 2. PIT STOP Bah */}
-        <PitStopBah />
-
-        {/* 3. Modalidades (POP • BLACK • GUARD com transição sticky no scroll) */}
+        {/* 2. Modalidades (POP • BLACK • GUARD com transição sticky no scroll) */}
         <Modalities />
 
         {/* 4. CTA Final */}
