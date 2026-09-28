@@ -10,6 +10,10 @@ import { LaunchModal } from './components/LaunchModal';
 import { PrivacyModal } from './components/PrivacyModal';
 import { ContactModal } from './components/ContactModal';
 
+import { NeonScrollPath } from './components/NeonScrollPath';
+import { HeadlightSpotlight } from './components/HeadlightSpotlight';
+import { SpeedParticles } from './components/SpeedParticles';
+
 export default function App() {
   const [partnerModalOpen, setPartnerModalOpen] = useState(false);
   const [launchModalOpen, setLaunchModalOpen] = useState(false);
@@ -17,20 +21,17 @@ export default function App() {
   const [contactModalOpen, setContactModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-[#B8FF00] selection:text-black">
+    <div className="min-h-screen bg-[#050505] text-white selection:bg-[#B8FF00] selection:text-black relative overflow-x-hidden">
+      {/* Facho de farol LED seguindo cursor no desktop & partículas sutis */}
+      <HeadlightSpotlight />
+      <SpeedParticles />
+
       {/* Dynamic Navigation Bar with Centered Sticky BahCar Logo */}
       <Navbar
         onOpenPartner={() => setPartnerModalOpen(true)}
         onOpenContact={() => setContactModalOpen(true)}
       />
 
-      {/* 
-        Estrutura Oficial da Landing:
-        1. Hero com vídeo
-        2. Modalidades
-        3. CTA final
-        4. Footer
-      */}
       <main>
         {/* 1. Hero com vídeo (scroll scrubbed GSAP ScrollTrigger) */}
         <Hero
@@ -39,17 +40,24 @@ export default function App() {
           hlsStreamUrl={import.meta.env.VITE_HLS_STREAM_URL}
         />
 
-        {/* 2. Comissão Clara - Bloco horizontal 16:9 */}
-        <ComissaoMotorista />
+        {/* Seções pós-vídeo com a linha neon de baixa exposição e o carro em trajeto no fundo */}
+        <div className="relative w-full">
+          <NeonScrollPath />
 
-        {/* 3. Modalidades: POP, BLACK e GUARD */}
-        <Modalities />
+          <div className="relative z-10">
+            {/* 2. Comissão Clara - Bloco horizontal 16:9 */}
+            <ComissaoMotorista />
 
-        {/* 4. CTA Final */}
-        <FinalCta
-          onOpenLaunch={() => setLaunchModalOpen(true)}
-          onOpenPartner={() => setPartnerModalOpen(true)}
-        />
+            {/* 3. Modalidades: POP, BLACK e GUARD */}
+            <Modalities />
+
+            {/* 4. CTA Final */}
+            <FinalCta
+              onOpenLaunch={() => setLaunchModalOpen(true)}
+              onOpenPartner={() => setPartnerModalOpen(true)}
+            />
+          </div>
+        </div>
       </main>
 
       {/* 5. Footer */}

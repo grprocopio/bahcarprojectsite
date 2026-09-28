@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useScrollReveal } from '../hooks/useScrollPosition';
 
 interface ModalityOption {
   id: 'pop' | 'black' | 'guard';
@@ -56,7 +57,20 @@ const MODALITIES_DATA: ModalityOption[] = [
 
 export const Modalities: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'pop' | 'black' | 'guard'>('pop');
+  const [direction, setDirection] = useState<'right' | 'left'>('right');
   const currentModality = MODALITIES_DATA.find((m) => m.id === activeTab) || MODALITIES_DATA[0];
+
+  const handleSelectTab = (tabId: 'pop' | 'black' | 'guard') => {
+    if (tabId === activeTab) return;
+    const order = ['pop', 'black', 'guard'];
+    const currentIdx = order.indexOf(activeTab);
+    const nextIdx = order.indexOf(tabId);
+    setDirection(nextIdx > currentIdx ? 'right' : 'left');
+    setActiveTab(tabId);
+  };
+
+  const [headerRef, headerVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.15 });
+  const [displayRef, displayVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.10 });
 
   return (
     <section
@@ -67,11 +81,13 @@ export const Modalities: React.FC = () => {
       <div className="absolute inset-0 hairline-grid opacity-30 pointer-events-none" />
 
       {/* CABEÇALHO COM A MESMA TIPOGRAFIA DA HERO */}
-      <div className="relative z-10 w-full max-w-[1500px] mx-auto pb-10 sm:pb-14 border-b border-white/[0.08]">
+      <div
+        ref={headerRef}
+        className={`relative z-10 w-full max-w-[1500px] mx-auto pb-10 sm:pb-14 border-b border-white/[0.08] scroll-reveal ${headerVisible ? 'is-revealed' : ''}`}
+      >
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8">
           <div>
-            <div className="flex items-center gap-3 mb-3">
-              <span className="w-2 h-2 rounded-full bg-[#B8FF00] shadow-[0_0_8px_#B8FF00]" />
+            <div className="mb-3">
               <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-[#B8FF00] uppercase">
                 FROTA HOMOLOGADA EM SANTA MARIA
               </span>
@@ -95,7 +111,7 @@ export const Modalities: React.FC = () => {
               return (
                 <button
                   key={item.id}
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => handleSelectTab(item.id)}
                   className={`flex-1 sm:flex-initial px-6 sm:px-8 py-3 rounded-xl text-xs sm:text-sm italic font-black uppercase tracking-wider transition-all duration-200 active:scale-95 text-center ${
                     isActive
                       ? 'bg-[#B8FF00] text-black shadow-[0_0_20px_rgba(184,255,0,0.3)]'
@@ -113,7 +129,10 @@ export const Modalities: React.FC = () => {
       </div>
 
       {/* CONTEÚDO PRINCIPAL: Sem quadrados/caixas - 100% integrado diretamente na página */}
-      <div className="relative z-10 w-full max-w-[1500px] mx-auto py-10 sm:py-14">
+      <div
+        ref={displayRef}
+        className={`relative z-10 w-full max-w-[1500px] mx-auto py-10 sm:py-14 scroll-reveal scroll-reveal-delay-1 ${displayVisible ? 'is-revealed' : ''}`}
+      >
         
         {/* --- VISÃO MOBILE & TABLET (< lg): Aberto direto na página, sem quadrado/box e sem textos embaixo dos carros --- */}
         <div className="lg:hidden flex flex-col gap-4">
@@ -132,30 +151,34 @@ export const Modalities: React.FC = () => {
               {currentModality.tagline}
             </p>
 
-            {/* Imagem do Veículo / Modalidade Solta e Grande na Página (sem texto embaixo) */}
-            <div className="relative w-full my-6 flex items-center justify-center">
+            {/* Imagem do Veículo / Modalidade Solta e Grande na Página com animação Drive-In */}
+            <div className="relative w-full my-6 flex items-center justify-center overflow-hidden">
               <img
-                key={currentModality.id}
+                key={`${currentModality.id}-${direction}`}
                 src={currentModality.imageSrc}
                 alt={currentModality.alt}
-                className="w-full max-w-[550px] h-auto object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,0.95)] animate-in fade-in zoom-in-95 duration-300"
+                className={`w-full max-w-[550px] h-auto object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,0.95)] ${
+                  direction === 'right' ? 'animate-drive-in-right' : 'animate-drive-in-left'
+                }`}
               />
             </div>
 
           </div>
         </div>
 
-        {/* --- VISÃO DESKTOP (lg+): Solto diretamente na página, sem borda de card --- */}
+        {/* --- VISÃO DESKTOP (lg+): Solto diretamente na página com animação Drive-In automotiva --- */}
         <div className="hidden lg:block relative w-full aspect-[1490/656] min-h-[500px] max-h-[640px] flex items-center justify-center overflow-hidden">
           {MODALITIES_DATA.map((item) => {
             const isActive = activeTab === item.id;
             return (
               <div
                 key={item.id}
-                className={`absolute inset-0 w-full h-full flex items-center justify-center transition-all duration-500 ease-out will-change-[opacity,transform] ${
+                className={`absolute inset-0 w-full h-full flex items-center justify-center transition-opacity duration-300 ease-out will-change-[opacity,transform] ${
                   isActive
-                    ? 'opacity-100 scale-100 z-10 pointer-events-auto'
-                    : 'opacity-0 scale-[0.985] z-0 pointer-events-none'
+                    ? `opacity-100 z-10 pointer-events-auto ${
+                        direction === 'right' ? 'animate-drive-in-right' : 'animate-drive-in-left'
+                      }`
+                    : 'opacity-0 z-0 pointer-events-none'
                 }`}
               >
                 <img

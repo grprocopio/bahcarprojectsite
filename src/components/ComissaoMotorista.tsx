@@ -1,8 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { ArrowUpRight } from 'lucide-react';
+import { useScrollReveal } from '../hooks/useScrollPosition';
+import { AnimatedCounter } from './AnimatedCounter';
 
 export const ComissaoMotorista: React.FC = () => {
+  // Reveal hooks para animação progressiva de fade-in no scroll
+  const [headerRef, headerVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.15 });
+  const [cockpitRef, cockpitVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.15 });
+  const [cardsRef, cardsVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.12 });
+
+  // Começando a partir de R$ 10,00
   const [rideValue, setRideValue] = useState<number>(27.50);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef<boolean>(false);
+
+  const minVal = 10;
+  const maxVal = 120;
 
   const bahcarRate = 0.16;
   const competitorRate = 0.35;
@@ -15,113 +28,201 @@ export const ComissaoMotorista: React.FC = () => {
 
   const difference = bahcarNet - competitorNet;
 
+  // Percentual para o preenchimento fluido da barra
+  const fillPercent = Math.max(0, Math.min(100, ((rideValue - minVal) / (maxVal - minVal)) * 100));
+
+  // Predefinições rápidas para conveniência
+  const quickPicks = [10.00, 15.50, 27.50, 42.00, 65.00, 95.00];
+
+  // Cálculo de valor a partir da posição X na tela com requestAnimationFrame
+  const updateValueFromClientX = useCallback((clientX: number) => {
+    if (!trackRef.current) return;
+    const rect = trackRef.current.getBoundingClientRect();
+    const clampedX = Math.max(0, Math.min(rect.width, clientX - rect.left));
+    const ratio = clampedX / rect.width;
+    const rawVal = minVal + ratio * (maxVal - minVal);
+    // Arredonda para centavos múltiplos de 10 centavos
+    const rounded = Math.round(rawVal * 10) / 10;
+    setRideValue(Math.max(minVal, Math.min(maxVal, rounded)));
+  }, [minVal, maxVal]);
+
+  // Pointer down inicia captura direta sem aguardar soltar o dedo
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    isDraggingRef.current = true;
+    updateValueFromClientX(e.clientX);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingRef.current && e.buttons !== 1) return;
+    updateValueFromClientX(e.clientX);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    isDraggingRef.current = false;
+    try {
+      (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
+    } catch {
+      // Ignorar caso já liberado
+    }
+  };
+
+  // Fallback nativo caso use teclado ou acessibilidade
+  const handleNativeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseFloat(e.target.value);
+    setRideValue(val);
+  };
+
   return (
     <section
       id="comissao-clara"
-      className="relative w-full py-24 sm:py-32 lg:py-40 px-5 sm:px-8 lg:px-16 xl:px-20 bg-[#050505] text-white border-t border-white/[0.08] overflow-hidden select-none"
+      className="relative w-full py-20 sm:py-28 lg:py-32 px-5 sm:px-8 lg:px-16 xl:px-20 bg-[#050505] text-white border-t border-white/[0.08] overflow-hidden select-none"
     >
       {/* Subtle Hairline Grid & Cinematic Ambient */}
       <div className="absolute inset-0 hairline-grid opacity-40 pointer-events-none" />
       <div className="absolute -top-32 right-1/4 w-[500px] h-[500px] bg-[#B8FF00]/[0.025] blur-[160px] pointer-events-none" />
 
-      <div className="relative z-10 w-full max-w-[1500px] mx-auto flex flex-col gap-16 lg:gap-24">
+      <div className="relative z-10 w-full max-w-[1500px] mx-auto flex flex-col gap-10 lg:gap-12">
         
-        {/* 1. HERO-ALIGNED EDITORIAL STATEMENT */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-end">
+        {/* EDITORIAL STATEMENT - DIRETO E PROFISSIONAL */}
+        <div
+          ref={headerRef}
+          className={`max-w-4xl flex flex-col scroll-reveal ${headerVisible ? 'is-revealed' : ''}`}
+        >
+          <h2
+            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl italic font-black uppercase tracking-[0.02em] leading-[1.08] text-balance text-white"
+            style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}
+          >
+            <span>TAXA FIXA DE 16%.</span>{' '}
+            <br className="hidden sm:inline" />
+            <span className="text-[#B8FF00] drop-shadow-[0_0_24px_rgba(184,255,0,0.35)]">O RESTANTE FICA NO SEU BOLSO.</span>
+          </h2>
+
+          <p className="mt-4 sm:mt-6 text-base sm:text-lg text-neutral-300 font-normal leading-relaxed max-w-2xl">
+            Aqui a regra é transparente e sem surpresas: a BahCar cobra apenas <strong className="text-[#B8FF00] font-bold">16% fixos</strong> por corrida. Sem tarifas ocultas, sem descontos misteriosos no fim da semana.
+          </p>
+        </div>
+
+        {/* TAXA 16% + SLIDER TOUCH ULTRA-RESPONSIVO EM TEMPO REAL */}
+        <div className="w-full pt-8 border-t border-white/[0.08]">
           
-          <div className="lg:col-span-8 flex flex-col">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="w-2 h-2 rounded-full bg-[#B8FF00] shadow-[0_0_8px_#B8FF00]" />
-              <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-[#B8FF00] uppercase">
-                POLÍTICA DE TRANSPARÊNCIA · SANTA MARIA
-              </span>
-            </div>
-
-            <h2
-              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl italic font-black uppercase tracking-[0.02em] leading-[1.08] text-balance text-white"
-              style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}
-            >
-              <span>COMISSÃO CLARA.</span>{' '}
-              <br className="hidden sm:inline" />
-              <span className="text-white/40">SEM SURPRESAS.</span>{' '}
-              <span className="outline-text-hollow inline-block ml-1">
-                16% FIXO.
-              </span>
-            </h2>
-
-            <p className="mt-6 sm:mt-8 text-base sm:text-xl text-neutral-300 font-normal leading-relaxed max-w-2xl">
-              Aplicativos multinacionais retêm até 40% da sua corrida sem aviso prévio. Na BahCar, o acordo é direto e inalterável: <strong className="text-white font-semibold">84% do valor total vai limpo para o motorista parceiro</strong>.
-            </p>
-          </div>
-
-          {/* Large Stat Box - Mechanical / Instrument Cluster Vibe */}
-          <div className="lg:col-span-4 flex flex-col justify-end">
-            <div className="p-7 sm:p-9 rounded-2xl bg-[#0b0f0b] border border-[#B8FF00]/30 shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#B8FF00]/[0.06] rounded-full blur-2xl pointer-events-none" />
-              
-              <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-[0.2em] text-[#B8FF00]">
-                <span>TAXA FIXA BAHCAR</span>
-                <span className="text-white/60">SM / RS</span>
-              </div>
-
-              <div className="flex items-baseline gap-1 my-4">
+          {/* Header do Cockpit: Taxa 16% + Controle de Simulação */}
+          <div
+            ref={cockpitRef}
+            className={`flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 scroll-reveal scroll-reveal-delay-1 ${cockpitVisible ? 'is-revealed' : ''}`}
+          >
+            
+            {/* Bloco compacto da Taxa 16% */}
+            <div className="flex items-center gap-4 bg-[#0b0f0b] px-5 py-3 rounded-2xl border border-[#B8FF00]/30 shadow-lg self-start">
+              <div className="flex items-baseline gap-0.5">
                 <span
-                  className="text-7xl sm:text-8xl font-black italic tracking-tighter text-[#B8FF00] tabular-nums leading-none"
+                  className="text-4xl sm:text-5xl font-black italic tracking-tighter text-[#B8FF00] tabular-nums leading-none"
                   style={{ fontFamily: "'Kanit', 'Saira', sans-serif" }}
                 >
                   16
                 </span>
-                <span className="text-4xl sm:text-5xl font-black italic text-[#B8FF00] leading-none">%</span>
+                <span className="text-2xl font-black italic text-[#B8FF00] leading-none">%</span>
               </div>
-
-              <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-neutral-300">
-                <span>Motorista fica com:</span>
-                <span className="font-mono font-bold text-white text-sm">84%</span>
+              <div className="border-l border-white/10 pl-4 text-left">
+                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#B8FF00] block">
+                  TAXA FIXA BAHCAR
+                </span>
+                <span className="text-xs text-neutral-300 font-medium">
+                  Retenção mínima e <strong>previsível</strong>
+                </span>
               </div>
             </div>
-          </div>
 
-        </div>
+            {/* Controle de Simulação Touch Real-Time (sem delay, muda na hora enquanto o dedo corre) */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-[#0a0a0a] px-5 sm:px-6 py-4 rounded-2xl border border-white/10 shadow-xl w-full lg:w-auto">
+              
+              <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+                <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 shrink-0">
+                  Valor bruto:
+                </span>
+                
+                {/* Valor Grande e Nítido com centavos reais e efeito tacômetro digital */}
+                <span className="text-2xl sm:text-3xl font-black font-mono text-[#B8FF00] tracking-tight min-w-[130px] text-right">
+                  <AnimatedCounter value={rideValue} prefix="R$ " duration={180} />
+                </span>
+              </div>
 
-        {/* 2. COMPARATIVO REAL / SIMULADOR DINÂMICO ESTILO COCKPIT */}
-        <div className="w-full pt-12 border-t border-white/[0.08]">
-          
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-10">
-            <div>
-              <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-[#B8FF00] block mb-1">
-                COMPROVAÇÃO MATEMÁTICA
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-bold font-heading text-white tracking-tight">
-                Simule qualquer corrida em Santa Maria
-              </h3>
-            </div>
+              {/* Slider Tátil com Resposta Contínua Instantânea a cada pixel */}
+              <div className="flex items-center gap-3 w-full sm:w-64 md:w-80 select-none">
+                <span className="text-[11px] font-mono text-neutral-500 tabular-nums shrink-0">R$ 10</span>
+                
+                <div
+                  ref={trackRef}
+                  onPointerDown={handlePointerDown}
+                  onPointerMove={handlePointerMove}
+                  onPointerUp={handlePointerUp}
+                  onPointerCancel={handlePointerUp}
+                  className="relative w-full h-11 flex items-center cursor-pointer touch-none"
+                  style={{ touchAction: 'none' }}
+                >
+                  {/* Trilho de Fundo */}
+                  <div className="w-full h-2.5 rounded-full bg-white/10 relative overflow-hidden pointer-events-none">
+                    {/* Barra Preenchida Verde Neon */}
+                    <div
+                      className="absolute top-0 bottom-0 left-0 bg-[#B8FF00] rounded-full"
+                      style={{ width: `${fillPercent}%` }}
+                    />
+                  </div>
 
-            {/* Slider de Precisão Cockpit */}
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 bg-[#0a0a0a] px-6 py-4 rounded-2xl border border-white/10">
-              <span className="text-xs font-mono uppercase tracking-wider text-neutral-400">
-                Valor bruto:
-              </span>
-              <input
-                type="range"
-                min="15"
-                max="120"
-                step="0.5"
-                value={rideValue}
-                onChange={(e) => setRideValue(parseFloat(e.target.value))}
-                className="w-36 sm:w-56 accent-[#B8FF00] cursor-pointer"
-                aria-label="Simular valor da corrida"
-              />
-              <span className="text-xl font-black font-mono text-[#B8FF00] tabular-nums tracking-tight">
-                R$ {rideValue.toFixed(2).replace('.', ',')}
-              </span>
+                  {/* Thumb / Botão Deslizante com Brilho Neon e Efeito Tátil */}
+                  <div
+                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#B8FF00] border-2 border-black shadow-[0_0_16px_rgba(184,255,0,0.8),0_2px_8px_rgba(0,0,0,0.9)] flex items-center justify-center pointer-events-none active:scale-110"
+                    style={{ left: `${fillPercent}%` }}
+                  >
+                    <div className="w-2 h-2 rounded-full bg-black/40" />
+                  </div>
+
+                  {/* Input invisível para total acessibilidade e suporte de teclado */}
+                  <input
+                    type="range"
+                    min={minVal}
+                    max={maxVal}
+                    step="0.10"
+                    value={rideValue}
+                    onChange={handleNativeChange}
+                    className="sr-only"
+                    aria-label="Simular valor da corrida com centavos"
+                  />
+                </div>
+
+                <span className="text-[11px] font-mono text-neutral-500 tabular-nums shrink-0">R$ 120</span>
+              </div>
+
+              {/* Atalhos rápidos com centavos realistas de corridas */}
+              <div className="hidden xl:flex items-center gap-1.5 pl-2 border-l border-white/10">
+                {quickPicks.map((val) => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => setRideValue(val)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition-colors ${
+                      Math.abs(rideValue - val) < 0.2
+                        ? 'bg-[#B8FF00] text-black shadow-[0_0_10px_rgba(184,255,0,0.4)]'
+                        : 'bg-white/5 text-neutral-400 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    R${val.toFixed(val % 1 === 0 ? 0 : 2)}
+                  </button>
+                ))}
+              </div>
+
             </div>
           </div>
 
           {/* Cards Lado a Lado: Visual Realista de Extrato de Corrida */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          <div
+            ref={cardsRef}
+            className={`grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 scroll-reveal scroll-reveal-delay-2 ${cardsVisible ? 'is-revealed' : ''}`}
+          >
             
             {/* Coluna BahCar - Destaque Neon Preto e Verde */}
-            <div className="relative p-8 sm:p-10 rounded-2xl bg-[#060a06] border-2 border-[#B8FF00]/50 shadow-[0_10px_40px_rgba(184,255,0,0.06)] flex flex-col justify-between">
+            <div className="relative p-7 sm:p-9 rounded-2xl bg-[#060a06] border-2 border-[#B8FF00]/50 shadow-[0_10px_40px_rgba(184,255,0,0.06)] flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between pb-5 border-b border-[#B8FF00]/25 mb-6">
                   <div>
@@ -140,15 +241,15 @@ export const ComissaoMotorista: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-baseline justify-between">
                     <span className="text-sm text-neutral-300">Corrida de:</span>
-                    <span className="text-sm font-mono text-neutral-400 tabular-nums">
-                      R$ {rideValue.toFixed(2).replace('.', ',')}
+                    <span className="text-sm font-mono text-neutral-400">
+                      <AnimatedCounter value={rideValue} prefix="R$ " duration={180} />
                     </span>
                   </div>
 
                   <div className="flex items-baseline justify-between">
                     <span className="text-sm text-neutral-300">Taxa BahCar (16%):</span>
-                    <span className="text-sm font-mono text-red-400 tabular-nums">
-                      - R$ {bahcarCommission.toFixed(2).replace('.', ',')}
+                    <span className="text-sm font-mono text-red-400">
+                      <AnimatedCounter value={bahcarCommission} prefix="- R$ " duration={180} />
                     </span>
                   </div>
 
@@ -156,21 +257,16 @@ export const ComissaoMotorista: React.FC = () => {
                     <span className="text-base font-bold text-white uppercase tracking-wider">
                       Seu Ganho Líquido:
                     </span>
-                    <span className="text-3xl sm:text-4xl font-black font-mono text-[#B8FF00] tabular-nums">
-                      R$ {bahcarNet.toFixed(2).replace('.', ',')}
+                    <span className="text-3xl sm:text-4xl font-black font-mono text-[#B8FF00] drop-shadow-[0_0_12px_rgba(184,255,0,0.2)]">
+                      <AnimatedCounter value={bahcarNet} prefix="R$ " duration={200} />
                     </span>
                   </div>
                 </div>
               </div>
-
-              <div className="mt-8 pt-6 border-t border-[#B8FF00]/20 flex items-center justify-between text-xs text-[#B8FF00]/90 font-mono">
-                <span>Depósito semanal sem burocracia</span>
-                <ArrowUpRight className="w-4 h-4 text-[#B8FF00]" />
-              </div>
             </div>
 
             {/* Coluna Concorrência - Tons Neutros Sóbrios */}
-            <div className="p-8 sm:p-10 rounded-2xl bg-[#090909] border border-white/10 flex flex-col justify-between">
+            <div className="p-7 sm:p-9 rounded-2xl bg-[#090909] border border-white/10 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between pb-5 border-b border-white/10 mb-6">
                   <div>
@@ -189,15 +285,15 @@ export const ComissaoMotorista: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-baseline justify-between">
                     <span className="text-sm text-neutral-400">Corrida de:</span>
-                    <span className="text-sm font-mono text-neutral-400 tabular-nums">
-                      R$ {rideValue.toFixed(2).replace('.', ',')}
+                    <span className="text-sm font-mono text-neutral-400">
+                      <AnimatedCounter value={rideValue} prefix="R$ " duration={180} />
                     </span>
                   </div>
 
                   <div className="flex items-baseline justify-between">
                     <span className="text-sm text-neutral-400">Retenção (~35%):</span>
-                    <span className="text-sm font-mono text-red-500/80 tabular-nums">
-                      - R$ {competitorCommission.toFixed(2).replace('.', ',')}
+                    <span className="text-sm font-mono text-red-500/80">
+                      <AnimatedCounter value={competitorCommission} prefix="- R$ " duration={180} />
                     </span>
                   </div>
 
@@ -205,8 +301,8 @@ export const ComissaoMotorista: React.FC = () => {
                     <span className="text-base font-bold text-neutral-400 uppercase tracking-wider">
                       Seu Ganho Líquido:
                     </span>
-                    <span className="text-3xl sm:text-4xl font-black font-mono text-neutral-400 tabular-nums">
-                      R$ {competitorNet.toFixed(2).replace('.', ',')}
+                    <span className="text-3xl sm:text-4xl font-black font-mono text-neutral-400">
+                      <AnimatedCounter value={competitorNet} prefix="R$ " duration={200} />
                     </span>
                   </div>
                 </div>
@@ -214,36 +310,12 @@ export const ComissaoMotorista: React.FC = () => {
 
               <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400 font-mono">
                 <span>Diferença a favor do motorista:</span>
-                <span className="font-bold text-[#B8FF00] text-sm tabular-nums">
-                  + R$ {difference.toFixed(2).replace('.', ',')} / corrida
+                <span className="font-bold text-[#B8FF00] text-sm">
+                  + <AnimatedCounter value={difference} prefix="R$ " duration={200} /> / corrida
                 </span>
               </div>
             </div>
 
-          </div>
-
-          {/* Destaque de Impacto Mensal */}
-          <div className="mt-8 p-6 rounded-2xl bg-[#090909] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#B8FF00]/10 border border-[#B8FF00]/30 flex items-center justify-center text-[#B8FF00] font-mono font-bold text-sm shrink-0">
-                RS
-              </div>
-              <div>
-                <p className="text-sm font-bold text-white">
-                  Economia estimada de mais de R$ 1.200 a R$ 2.000 por mês
-                </p>
-                <p className="text-xs text-neutral-400">
-                  Considerando uma média de 15 a 20 corridas por dia em Santa Maria.
-                </p>
-              </div>
-            </div>
-            <a
-              href="#final-cta"
-              className="inline-flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-[#B8FF00] uppercase hover:underline shrink-0"
-            >
-              <span>QUERO SER PARCEIRO</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </a>
           </div>
 
         </div>

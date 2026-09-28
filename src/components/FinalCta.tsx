@@ -1,5 +1,6 @@
 import React from 'react';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { useScrollReveal } from '../hooks/useScrollPosition';
 
 interface FinalCtaProps {
   onOpenLaunch: () => void;
@@ -7,6 +8,8 @@ interface FinalCtaProps {
 }
 
 export const FinalCta: React.FC<FinalCtaProps> = ({ onOpenLaunch, onOpenPartner }) => {
+  const [contentRef, isVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.15 });
+
   return (
     <section
       id="final-cta"
@@ -17,15 +20,11 @@ export const FinalCta: React.FC<FinalCtaProps> = ({ onOpenLaunch, onOpenPartner 
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[#B8FF00]/[0.035] blur-[180px] pointer-events-none" />
 
       {/* Main Campaign Closing Narrative */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-8 text-center flex flex-col items-center">
+      <div
+        ref={contentRef}
+        className={`relative z-10 max-w-5xl mx-auto px-6 sm:px-8 text-center flex flex-col items-center scroll-reveal ${isVisible ? 'is-revealed' : ''}`}
+      >
         
-        <div className="flex items-center gap-3 mb-6">
-          <span className="w-2 h-2 rounded-full bg-[#B8FF00] shadow-[0_0_8px_#B8FF00]" />
-          <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-[#B8FF00] uppercase">
-            SANTA MARIA EM MOVIMENTO
-          </span>
-        </div>
-
         <h2
           className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl italic font-black uppercase tracking-[0.02em] leading-[1.05] text-balance text-white"
           style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}
@@ -56,22 +55,6 @@ export const FinalCta: React.FC<FinalCtaProps> = ({ onOpenLaunch, onOpenPartner 
           >
             <span>QUERO SER MOTORISTA</span>
           </button>
-        </div>
-
-        {/* Local Verification Highlights */}
-        <div className="mt-14 sm:mt-16 pt-8 border-t border-white/[0.08] flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs text-neutral-400 font-mono">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#B8FF00]" />
-            <span>Suporte 100% humanizado em Santa Maria</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#B8FF00]" />
-            <span>Taxa fixa de 16% sem surpresas</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#B8FF00]" />
-            <span>Segurança monitorada em tempo real</span>
-          </div>
         </div>
 
       </div>
