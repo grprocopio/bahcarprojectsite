@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CheckCircle2, Bell, Sparkles } from 'lucide-react';
+import { X, CheckCircle2, Bell } from 'lucide-react';
 
 interface LaunchModalProps {
   isOpen: boolean;
@@ -21,7 +21,7 @@ export const LaunchModal: React.FC<LaunchModalProps> = ({ isOpen, onClose }) => 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
       <div 
-        className="relative w-full max-w-md bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl text-left"
+        className="relative w-full max-w-md bg-[#090909] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl text-left"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -34,16 +34,16 @@ export const LaunchModal: React.FC<LaunchModalProps> = ({ isOpen, onClose }) => 
 
         {!registered ? (
           <div>
-            <div className="w-12 h-12 rounded-xl bg-[#B8FF00]/10 border border-[#B8FF00]/20 flex items-center justify-center text-[#B8FF00] mb-4">
-              <Sparkles className="w-6 h-6" />
-            </div>
+            <p className="text-xs font-mono font-medium tracking-[0.2em] text-[#B8FF00] uppercase mb-2">
+              Lançamento Oficial
+            </p>
             
-            <h3 className="text-2xl font-bold font-heading text-white">
+            <h3 className="text-2xl font-bold font-heading text-white tracking-tight">
               Conheça a BahCar em primeira mão
             </h3>
             
-            <p className="text-sm text-neutral-400 mt-2 leading-relaxed">
-              O aplicativo está em fase final de lançamento em Santa Maria/RS. Deixe seu WhatsApp ou e-mail para receber acesso prioritário e condições exclusivas de estreia.
+            <p className="text-sm text-neutral-300 mt-2 leading-relaxed">
+              O aplicativo está em fase final de lançamento em Santa Maria/RS. Deixe seu WhatsApp ou e-mail para receber acesso prioritário.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">

@@ -44,7 +44,7 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({ isOpen, onClose }) =
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
       <div 
-        className="relative w-full max-w-lg bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl text-left"
+        className="relative w-full max-w-lg bg-[#090909] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl text-left"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -58,14 +58,14 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({ isOpen, onClose }) =
         {!submitted ? (
           <div>
             <div className="mb-6">
-              <span className="text-xs uppercase tracking-wider text-[#B8FF00] font-semibold">
-                Parceria Motorista · Santa Maria
-              </span>
-              <h3 className="text-2xl font-bold font-heading text-white mt-1">
+              <p className="text-xs font-mono font-medium tracking-[0.2em] text-[#B8FF00] uppercase mb-2">
+                Motorista Parceiro · Santa Maria
+              </p>
+              <h3 className="text-2xl sm:text-3xl font-bold font-heading text-white tracking-tight">
                 Dirija com a BahCar
               </h3>
-              <p className="text-sm text-neutral-400 mt-2">
-                Cadastre seu interesse para ser um dos primeiros motoristas parceiros na nossa cidade. Relação transparente e suporte local.
+              <p className="text-sm text-neutral-300 mt-2 leading-relaxed">
+                Cadastre seu interesse para ser um dos primeiros motoristas parceiros na nossa cidade. Relação transparente, taxa de 16% fixa e suporte local.
               </p>
             </div>
 

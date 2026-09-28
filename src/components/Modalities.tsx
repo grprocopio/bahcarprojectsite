@@ -61,32 +61,47 @@ export const Modalities: React.FC = () => {
   return (
     <section
       id="modalidades"
-      className="relative w-full py-12 sm:py-16 lg:py-20 px-4 sm:px-8 lg:px-16 xl:px-24 bg-[#050505] text-white border-t border-white/5 overflow-hidden"
+      className="relative w-full py-20 sm:py-28 lg:py-36 px-5 sm:px-8 lg:px-16 xl:px-20 bg-[#050505] text-white border-t border-white/[0.08] overflow-hidden select-none"
     >
-      {/* Background idêntico e contínuo com a página (#050505) */}
+      {/* Background idêntico e contínuo com a página (#050505) com grade sutil */}
+      <div className="absolute inset-0 hairline-grid opacity-30 pointer-events-none" />
 
-      {/* CABEÇALHO */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto pb-6 sm:pb-8 border-b border-white/10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 sm:gap-6">
+      {/* CABEÇALHO COM A MESMA TIPOGRAFIA DA HERO */}
+      <div className="relative z-10 w-full max-w-[1500px] mx-auto pb-10 sm:pb-14 border-b border-white/[0.08]">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8">
           <div>
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black font-heading tracking-tight text-white uppercase leading-none">
-              MODALIDADES <span className="text-[#B8FF00]">BAHCAR</span>
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-2 h-2 rounded-full bg-[#B8FF00] shadow-[0_0_8px_#B8FF00]" />
+              <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-[#B8FF00] uppercase">
+                FROTA HOMOLOGADA EM SANTA MARIA
+              </span>
+            </div>
+
+            <h2
+              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl italic font-black uppercase tracking-[0.02em] leading-none text-white"
+              style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}
+            >
+              <span>MODALIDADES</span>{' '}
+              <span className="outline-text-hollow inline-block ml-1">
+                BAHCAR.
+              </span>
             </h2>
           </div>
 
-          {/* Seletor Segmentado Fluido */}
-          <div className="flex items-center gap-1 sm:gap-2 bg-[#0d1210] p-1.5 rounded-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.8)] w-full sm:w-auto">
+          {/* Seletor Segmentado Estilo Cockpit / Display Esportivo */}
+          <div className="flex items-center gap-1.5 bg-[#0a0a0a] p-1.5 rounded-2xl border border-white/10 w-full sm:w-auto shadow-2xl">
             {MODALITIES_DATA.map((item) => {
               const isActive = activeTab === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`flex-1 sm:flex-initial px-4 sm:px-8 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-heading font-black tracking-wider uppercase transition-all duration-300 active:scale-95 text-center ${
+                  className={`flex-1 sm:flex-initial px-6 sm:px-8 py-3 rounded-xl text-xs sm:text-sm italic font-black uppercase tracking-wider transition-all duration-200 active:scale-95 text-center ${
                     isActive
-                      ? 'bg-[#B8FF00] text-black shadow-[0_0_25px_rgba(184,255,0,0.45)]'
+                      ? 'bg-[#B8FF00] text-black shadow-[0_0_20px_rgba(184,255,0,0.3)]'
                       : 'text-neutral-400 hover:text-white bg-transparent'
                   }`}
+                  style={{ fontFamily: "'Kanit', 'Saira', sans-serif" }}
                   aria-label={`Selecionar modalidade ${item.name}`}
                 >
                   {item.name}
@@ -98,29 +113,32 @@ export const Modalities: React.FC = () => {
       </div>
 
       {/* CONTEÚDO PRINCIPAL: Sem quadrados/caixas - 100% integrado diretamente na página */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto py-8 sm:py-12">
+      <div className="relative z-10 w-full max-w-[1500px] mx-auto py-10 sm:py-14">
         
         {/* --- VISÃO MOBILE & TABLET (< lg): Aberto direto na página, sem quadrado/box e sem textos embaixo dos carros --- */}
         <div className="lg:hidden flex flex-col gap-4">
           <div className="w-full flex flex-col">
             
-            {/* Título direto da modalidade */}
-            <h3 className="text-4xl sm:text-6xl font-black font-heading text-white tracking-tight uppercase leading-none drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
+            {/* Título direto da modalidade com a tipografia oficial */}
+            <h3
+              className="text-5xl sm:text-7xl italic font-black text-white tracking-tight uppercase leading-none drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]"
+              style={{ fontFamily: "'Kanit', 'Saira', sans-serif" }}
+            >
               {currentModality.name}
             </h3>
 
             {/* Frase descritiva em destaque verde-limão */}
-            <p className="mt-3 text-xl sm:text-2xl font-bold text-[#B8FF00] leading-snug">
+            <p className="mt-3 text-lg sm:text-2xl font-bold text-[#B8FF00] leading-snug">
               {currentModality.tagline}
             </p>
 
             {/* Imagem do Veículo / Modalidade Solta e Grande na Página (sem texto embaixo) */}
-            <div className="relative w-full my-4 flex items-center justify-center">
+            <div className="relative w-full my-6 flex items-center justify-center">
               <img
                 key={currentModality.id}
                 src={currentModality.imageSrc}
                 alt={currentModality.alt}
-                className="w-full max-w-[500px] h-auto object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.95)] animate-in fade-in zoom-in-95 duration-300"
+                className="w-full max-w-[550px] h-auto object-contain drop-shadow-[0_24px_50px_rgba(0,0,0,0.95)] animate-in fade-in zoom-in-95 duration-300"
               />
             </div>
 
@@ -151,14 +169,14 @@ export const Modalities: React.FC = () => {
           })}
         </div>
 
-        {/* Especificações no Rodapé para Desktop (direto na página) */}
-        <div className="hidden lg:grid grid-cols-3 gap-8 pt-8 mt-6 border-t border-white/10">
+        {/* Especificações no Rodapé para Desktop (direto na página estilo cockpit) */}
+        <div className="hidden lg:grid grid-cols-3 gap-8 pt-10 mt-6 border-t border-white/[0.08]">
           {currentModality.specs.map((spec, index) => (
             <div key={index} className="flex items-center gap-4 py-2">
-              <div className="w-3 h-3 rounded-full bg-[#B8FF00] shadow-[0_0_12px_#B8FF00] shrink-0" />
+              <div className="w-2.5 h-2.5 rounded-full bg-[#B8FF00] shadow-[0_0_12px_#B8FF00] shrink-0" />
               <div>
-                <p className="text-xs font-mono text-neutral-400 uppercase tracking-wider">{spec.label}</p>
-                <p className="text-lg font-bold text-white">{spec.value}</p>
+                <p className="text-[11px] font-mono text-neutral-400 uppercase tracking-widest">{spec.label}</p>
+                <p className="text-base font-bold text-white tracking-wide">{spec.value}</p>
               </div>
             </div>
           ))}

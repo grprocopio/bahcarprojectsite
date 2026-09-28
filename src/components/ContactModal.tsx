@@ -12,7 +12,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
       <div 
-        className="relative w-full max-w-md bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl text-left"
+        className="relative w-full max-w-md bg-[#090909] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl text-left"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -24,13 +24,13 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
         </button>
 
         <div className="mb-6">
-          <span className="text-xs uppercase tracking-wider text-[#B8FF00] font-semibold">
+          <p className="text-xs font-mono font-medium tracking-[0.2em] text-[#B8FF00] uppercase mb-2">
             Canal Direto
-          </span>
-          <h3 className="text-2xl font-bold font-heading text-white mt-1">
+          </p>
+          <h3 className="text-2xl font-bold font-heading text-white tracking-tight">
             Fale com a BahCar
           </h3>
-          <p className="text-sm text-neutral-400 mt-1">
+          <p className="text-sm text-neutral-300 mt-2 leading-relaxed">
             Atendimento local humanizado em Santa Maria/RS.
           </p>
         </div>

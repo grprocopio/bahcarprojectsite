@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Sparkles } from 'lucide-react';
 import Hls from 'hls.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -275,7 +274,7 @@ export const Hero: React.FC<HeroProps> = ({ hlsStreamUrl }) => {
       </div>
 
       {/* 
-        Buffer Loading Overlay (With Safety Timeout so mobile never stays locked)
+        Buffer Loading Overlay (Clean, professional, anti-AI-slop)
       */}
       <div
         className={`absolute inset-0 z-30 bg-[#050505] flex flex-col items-center justify-center transition-all duration-700 ${
@@ -283,22 +282,18 @@ export const Hero: React.FC<HeroProps> = ({ hlsStreamUrl }) => {
         }`}
       >
         <div className="flex flex-col items-center gap-4 max-w-xs text-center px-6">
-          <div className="w-10 h-10 rounded-2xl bg-[#092218] border border-[#B8FF00]/50 flex items-center justify-center text-[#B8FF00] shadow-[0_0_20px_rgba(184,255,0,0.25)]">
-            <Sparkles className="w-5 h-5 animate-pulse" />
-          </div>
-
-          <div className="space-y-1">
-            <div className="font-heading font-bold text-xs tracking-wider text-white uppercase">
-              BAHCAR CINEMATIC
+          <div className="space-y-1.5">
+            <div className="font-heading font-black text-sm tracking-[0.2em] text-white uppercase">
+              BAHCAR
             </div>
-            <div className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#B8FF00]">
-              Buffer: {bufferPercent > 0 ? `${bufferPercent}%` : 'Carregando...'}
+            <div className="text-[11px] font-mono uppercase tracking-[0.25em] text-[#B8FF00] tabular-nums">
+              {bufferPercent > 0 ? `${bufferPercent}%` : 'Iniciando...'}
             </div>
           </div>
 
-          <div className="w-40 h-1 bg-white/10 rounded-sm overflow-hidden">
+          <div className="w-36 h-0.5 bg-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#B8FF00] transition-all duration-300 shadow-[0_0_10px_#B8FF00]"
+              className="h-full bg-[#B8FF00] transition-all duration-300"
               style={{ width: `${Math.max(15, bufferPercent)}%` }}
             />
           </div>

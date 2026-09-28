@@ -63,7 +63,7 @@ h1, h2, h3, h4, .font-heading {
   scrollbar-width: none;
 }
 
-/* Hollow Outline Text (like FUTURE reference image) */
+/* Hollow Outline Text (Hero matching) */
 .outline-text-hollow {
   -webkit-text-stroke: 1.8px #B8FF00;
   -webkit-text-fill-color: transparent;
@@ -75,4 +75,18 @@ h1, h2, h3, h4, .font-heading {
   .outline-text-hollow {
     -webkit-text-stroke: 1.3px #B8FF00;
   }
+}
+
+/* Subtle Film Grain Texture Overlay for cinematic reality */
+.film-grain {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+/* Technical Hairline Grid */
+.hairline-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
 }
