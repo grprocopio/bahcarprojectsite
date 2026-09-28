@@ -1,73 +1,58 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Info, Sparkles, Navigation, ShieldCheck } from 'lucide-react';
+import { Shield, Camera, ArrowRight, Check } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-interface ModalityItem {
-  id: 'pop' | 'black' | 'guard';
+type ModalityId = 'pop' | 'black' | 'guard';
+
+interface ModalityConfig {
+  id: ModalityId;
   index: string;
   name: string;
   tagline: string;
   description: string;
-  badge: string;
   carImage: string;
   carAlt: string;
-  themeColor: string;
-  atmosphere: string;
-  icon: React.ComponentType<{ className?: string }>;
+  hasShield?: boolean;
 }
 
-const MODALITIES_DATA: ModalityItem[] = [
+const MODALITIES: ModalityConfig[] = [
   {
     id: 'pop',
     index: '01',
     name: 'POP',
-    tagline: 'Praticidade para o dia a dia.',
-    description: 'A categoria essencial da BahCar. Carros ágeis e acessíveis para seus deslocamentos cotidianos por toda Santa Maria, com embarque rápido e conexão direta.',
-    badge: 'Urbano & Acessível',
-    carImage: '/images/bahcar_pop_car_1790556191193.jpg',
-    carAlt: 'Veículo categoria BahCar POP em cenário urbano',
-    themeColor: '#B8FF00',
-    atmosphere: 'Ritmo da Cidade',
-    icon: Navigation,
+    tagline: 'Deslocamento padrão',
+    description: 'Praticidade para as corridas do dia a dia.',
+    carImage: '/images/pop_car.jpg',
+    carAlt: 'Veículo compacto da categoria BahCar POP',
   },
   {
     id: 'black',
     index: '02',
     name: 'BLACK',
-    tagline: 'Uma experiência diferenciada.',
-    description: 'Veículos de categoria superior com maior espaço interno, acabamento sofisticado e conforto acústico. O padrão ideal para compromissos executivos e ocasiões especiais.',
-    badge: 'Conforto & Refinamento',
-    carImage: '/images/bahcar_black_car_1790556200632.jpg',
-    carAlt: 'Sedan executivo categoria BahCar BLACK',
-    themeColor: '#E2E8F0',
-    atmosphere: 'Padrão Superior',
-    icon: Sparkles,
+    tagline: 'Experiência premium',
+    description: 'Veículos e atendimento em uma categoria diferenciada.',
+    carImage: '/images/black_car.jpg',
+    carAlt: 'Sedan executivo da categoria BahCar BLACK',
   },
   {
     id: 'guard',
     index: '03',
     name: 'GUARD',
-    tagline: 'Mais acompanhamento durante a corrida.',
-    description: 'A tranquilidade de viajar com suporte e atenção dedicados. Compartilhamento do trajeto em tempo real com contatos de confiança para você se deslocar com total serenidade.',
-    badge: 'Acompanhamento & Cuidado',
-    carImage: '/images/bahcar_guard_car_1790556208798.jpg',
-    carAlt: 'Veículo categoria BahCar GUARD em rodovia ao entardecer',
-    themeColor: '#B8FF00',
-    atmosphere: 'Atenção Dedicada',
-    icon: ShieldCheck,
+    tagline: 'Acompanhamento em tempo real',
+    description: 'Videomonitoramento da corrida, sujeito à validação técnica e às regras de privacidade.',
+    carImage: '/images/guard_car.jpg',
+    carAlt: 'Veículo SUV da categoria BahCar GUARD com monitoramento assistido',
+    hasShield: true,
   },
 ];
 
 export const Modalities: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const pinSectionRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  // Refs for texts & images
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeTab, setActiveTab] = useState<ModalityId>('pop');
 
   useEffect(() => {
     const container = containerRef.current;
@@ -75,225 +60,220 @@ export const Modalities: React.FC = () => {
     if (!container || !pinSection) return;
 
     const ctx = gsap.context(() => {
-      const items = itemRefs.current.filter(Boolean) as HTMLDivElement[];
-
-      // Initial state: Item 0 is 100% visible, Items 1 and 2 are hidden
-      items.forEach((item, idx) => {
-        if (idx === 0) {
-          gsap.set(item, { opacity: 1, pointerEvents: 'auto', zIndex: 10 });
-          gsap.set(item.querySelector('.mod-car-img'), { scale: 1 });
-          gsap.set(item.querySelector('.mod-text-block'), { opacity: 1, y: 0 });
-        } else {
-          gsap.set(item, { opacity: 0, pointerEvents: 'none', zIndex: 1 });
-          gsap.set(item.querySelector('.mod-car-img'), { scale: 1.06 });
-          gsap.set(item.querySelector('.mod-text-block'), { opacity: 0, y: 30 });
-        }
-      });
-
-      // Master ScrollTrigger timeline pinned for 220% of viewport
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container,
-          start: 'top top',
-          end: '+=240%',
-          pin: pinSection,
-          scrub: 0.6,
-          anticipatePin: 1,
-          onUpdate: (self) => {
-            const p = self.progress;
-            if (p < 0.35) {
-              setActiveIndex(0);
-            } else if (p < 0.7) {
-              setActiveIndex(1);
-            } else {
-              setActiveIndex(2);
-            }
-          },
+      // Pin section during scroll and cycle activeTab automatically based on scroll progress
+      ScrollTrigger.create({
+        trigger: container,
+        start: 'top top',
+        end: '+=200%',
+        pin: pinSection,
+        scrub: 0.5,
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          const p = self.progress;
+          if (p < 0.35) {
+            setActiveTab('pop');
+          } else if (p < 0.7) {
+            setActiveTab('black');
+          } else {
+            setActiveTab('guard');
+          }
         },
       });
-
-      // Segment 1: Hold POP
-      tl.to({}, { duration: 1 });
-
-      // Transition 1: POP -> BLACK (crossfade cinematográfico)
-      tl.to(items[0], { opacity: 0, pointerEvents: 'none', duration: 0.8, ease: 'power2.inOut' }, 't1')
-        .to(items[0].querySelector('.mod-text-block'), { opacity: 0, y: -20, duration: 0.7, ease: 'power2.inOut' }, 't1')
-        .to(items[1], { opacity: 1, pointerEvents: 'auto', zIndex: 10, duration: 0.8, ease: 'power2.inOut' }, 't1+=0.1')
-        .to(items[1].querySelector('.mod-car-img'), { scale: 1, duration: 1, ease: 'power2.out' }, 't1+=0.1')
-        .to(items[1].querySelector('.mod-text-block'), { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 't1+=0.2');
-
-      // Segment 2: Hold BLACK
-      tl.to({}, { duration: 1 });
-
-      // Transition 2: BLACK -> GUARD (crossfade cinematográfico)
-      tl.to(items[1], { opacity: 0, pointerEvents: 'none', duration: 0.8, ease: 'power2.inOut' }, 't2')
-        .to(items[1].querySelector('.mod-text-block'), { opacity: 0, y: -20, duration: 0.7, ease: 'power2.inOut' }, 't2')
-        .to(items[2], { opacity: 1, pointerEvents: 'auto', zIndex: 10, duration: 0.8, ease: 'power2.inOut' }, 't2+=0.1')
-        .to(items[2].querySelector('.mod-car-img'), { scale: 1, duration: 1, ease: 'power2.out' }, 't2+=0.1')
-        .to(items[2].querySelector('.mod-text-block'), { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 't2+=0.2');
-
-      // Segment 3: Hold GUARD
-      tl.to({}, { duration: 1 });
     }, container);
 
     return () => ctx.revert();
   }, []);
 
-  // Jump smoothly by clicking indicators
-  const handleSelectModality = (idx: number) => {
-    if (!containerRef.current) return;
-    const containerTop = containerRef.current.offsetTop;
-    const scrollDistance = window.innerHeight * 2.4;
-    const targetScroll = containerTop + (idx / 2) * scrollDistance;
-    window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+  const handleSelect = (id: ModalityId, index: number) => {
+    setActiveTab(id);
+    if (containerRef.current) {
+      const containerTop = containerRef.current.offsetTop;
+      const scrollRange = window.innerHeight * 2.0;
+      const targetScroll = containerTop + (index / 2) * scrollRange;
+      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    }
   };
 
   return (
     <div ref={containerRef} className="relative w-full bg-[#050505] text-white">
-      {/* Sticky Pinned Viewport */}
+      {/* Pinned Screen Viewport */}
       <section
         ref={pinSectionRef}
-        className="w-full h-screen flex flex-col justify-between py-10 sm:py-14 px-6 sm:px-8 lg:px-12 max-w-7xl mx-auto overflow-hidden relative"
+        className="w-full h-screen flex flex-col justify-between py-10 sm:py-14 px-6 sm:px-10 lg:px-16 max-w-[1520px] mx-auto overflow-hidden select-none"
       >
-        {/* Topo: Título da Seção & Seletor de Categoria */}
-        <div className="relative z-20 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/10 pb-5">
-          <div>
-            <span className="text-[11px] uppercase font-mono tracking-[0.25em] text-[#B8FF00]">
-              EXPERIÊNCIAS DE MOBILIDADE
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-black font-heading tracking-tight mt-1 text-white uppercase">
-              Modalidades
-            </h2>
-            <p className="text-xs sm:text-sm text-neutral-400 font-light mt-1">
-              Três experiências pensadas para diferentes formas de se mover.
-            </p>
-          </div>
-
-          {/* Navegador Discreto de Categorias */}
-          <div className="flex items-center gap-2 bg-white/[0.04] p-1 rounded-full border border-white/10 backdrop-blur-md">
-            {MODALITIES_DATA.map((m, i) => (
-              <button
-                key={m.id}
-                onClick={() => handleSelectModality(i)}
-                className={`px-4 py-1.5 rounded-full text-xs font-mono font-bold tracking-wider transition-all duration-300 flex items-center gap-2 ${
-                  activeIndex === i
-                    ? 'bg-[#B8FF00] text-black shadow-[0_0_25px_rgba(184,255,0,0.4)]'
-                    : 'text-neutral-400 hover:text-white bg-transparent'
-                }`}
-              >
-                <span>{m.index}</span>
-                <span>{m.name}</span>
-              </button>
-            ))}
-          </div>
+        {/* TÍTULO NO TOPO: Alinhado à esquerda */}
+        <div className="flex-shrink-0 pt-2 pb-6 border-b border-white/10">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold font-heading tracking-tight leading-tight text-left">
+            <span className="text-[#B8FF00]">Modalidades</span>{' '}
+            <span className="text-white">previstas no aplicativo</span>
+          </h2>
         </div>
 
-        {/* Palco Central: 3 Apresentações de Produto com Veículo e Atmosfera Própria */}
-        <div className="relative flex-1 w-full my-4 flex items-center justify-center">
-          {MODALITIES_DATA.map((m, idx) => {
-            const IconComponent = m.icon;
-            const isGuard = m.id === 'guard';
-            const isBlack = m.id === 'black';
+        {/* ÁREA PRINCIPAL COM AS 3 MODALIDADES E DIVISÓRIAS VERTICAIS */}
+        <div className="flex-1 my-auto flex flex-col lg:flex-row items-stretch justify-between w-full h-[72vh] min-h-[500px] border-b border-white/10">
+          
+          {MODALITIES.map((modality, idx) => {
+            const isActive = activeTab === modality.id;
+            const isLeft = idx === 0;
+            const isCenter = idx === 1;
+            const isRight = idx === 2;
 
             return (
               <div
-                key={m.id}
-                ref={(el) => { itemRefs.current[idx] = el; }}
-                className="absolute inset-0 w-full h-full flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-14"
+                key={modality.id}
+                onClick={() => handleSelect(modality.id, idx)}
+                className={`relative flex flex-col justify-between transition-all duration-700 ease-out cursor-pointer ${
+                  // Dividers: vertical border on desktop
+                  idx < MODALITIES.length - 1 ? 'lg:border-r lg:border-white/15' : ''
+                } ${
+                  idx > 0 ? 'border-t lg:border-t-0 border-white/10' : ''
+                } ${
+                  // Expanded active column vs collapsed inactive column on desktop
+                  isActive
+                    ? 'lg:flex-[3.2] flex-1 bg-white/[0.015] px-6 sm:px-10 py-6 sm:py-8'
+                    : 'lg:flex-[1] flex-none py-4 lg:py-8 px-4 sm:px-6 hover:bg-white/[0.02] opacity-40 hover:opacity-75'
+                }`}
               >
-                {/* LADO ESQUERDO: Tipografia e Identidade da Modalidade */}
-                <div className="mod-text-block w-full lg:w-5/12 flex flex-col justify-center z-10">
-                  
-                  {/* Badge de Atmosfera */}
-                  <div className="flex items-center gap-2.5 mb-3">
+                {/* Active glow line on top of active column */}
+                {isActive && (
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#B8FF00] to-transparent shadow-[0_0_12px_#B8FF00]" />
+                )}
+
+                {/* --- HEADER DO BLOCO / COLUNA --- */}
+                <div className="flex-shrink-0">
+                  {/* Número de Índice */}
+                  <div className="flex items-center justify-between mb-2">
                     <span
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: m.themeColor }}
-                    />
-                    <span
-                      className="font-mono text-xs uppercase tracking-widest"
-                      style={{ color: m.themeColor }}
+                      className={`font-mono text-xs tracking-widest transition-colors duration-500 ${
+                        isActive ? 'text-[#B8FF00] font-bold' : 'text-neutral-500'
+                      }`}
                     >
-                      {m.badge}
+                      {modality.index}
                     </span>
+                    {isActive && (
+                      <span className="hidden sm:inline-block font-mono text-[10px] uppercase tracking-wider text-neutral-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">
+                        Em Destaque
+                      </span>
+                    )}
                   </div>
 
-                  {/* Nome Gigante da Categoria */}
-                  <h3 className="text-6xl sm:text-7xl lg:text-8xl font-black font-heading tracking-tighter text-white uppercase leading-none">
-                    {m.name}
+                  {/* Nome da Modalidade */}
+                  <h3
+                    className={`font-black font-heading tracking-tight transition-all duration-500 ${
+                      isActive
+                        ? 'text-4xl sm:text-6xl lg:text-7xl text-[#B8FF00]'
+                        : 'text-2xl sm:text-3xl lg:text-4xl text-neutral-500 group-hover:text-neutral-300'
+                    }`}
+                  >
+                    {modality.name}
                   </h3>
 
-                  {/* Frase Curta Marcante */}
+                  {/* Tagline / Subtítulo */}
                   <p
-                    className="mt-4 text-xl sm:text-2xl font-heading font-medium tracking-tight"
-                    style={{ color: isBlack ? '#FFFFFF' : '#B8FF00' }}
+                    className={`mt-2 font-heading transition-colors duration-500 ${
+                      isActive
+                        ? 'text-lg sm:text-xl lg:text-2xl font-bold text-white'
+                        : 'text-xs sm:text-sm text-neutral-500'
+                    }`}
                   >
-                    "{m.tagline}"
+                    {modality.tagline}
                   </p>
 
-                  {/* Descrição Concisa */}
-                  <p className="mt-3 text-sm sm:text-base text-neutral-300 font-light leading-relaxed max-w-lg">
-                    {m.description}
-                  </p>
-
-                  {/* Destaque sutil com ícone */}
-                  <div className="mt-6 flex items-center gap-3 text-xs font-mono text-neutral-400">
-                    <div className="w-8 h-8 rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center text-white">
-                      <IconComponent className="w-4 h-4" />
-                    </div>
-                    <span>Categoria projetada para o padrão BahCar em Santa Maria</span>
-                  </div>
-
-                  {/* Observação Discreta Obrigatória para GUARD */}
-                  {isGuard && (
-                    <div className="mt-5 p-3.5 rounded-xl bg-white/[0.02] border border-white/10 flex items-start gap-2.5 text-[11px] text-neutral-400 max-w-md">
-                      <Info className="w-4 h-4 text-[#B8FF00] flex-shrink-0 mt-0.5" />
-                      <span className="leading-relaxed">
-                        Acompanhamento preventivo de rota. Recursos de videomonitoramento dependem de validação técnica e das normas locais de privacidade.
-                      </span>
-                    </div>
+                  {/* Descrição detalhada da modalidade ativa */}
+                  {isActive && (
+                    <p className="mt-2 text-xs sm:text-sm lg:text-base text-neutral-300 font-light leading-relaxed max-w-xl animate-fade-in">
+                      {modality.description}
+                    </p>
                   )}
                 </div>
 
-                {/* LADO DIREITO: Apresentação Visual do Veículo (Editorial / Campanha) */}
-                <div className="w-full lg:w-7/12 h-[260px] sm:h-[340px] lg:h-[440px] relative rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.9)] bg-[#080B0E] group">
-                  
-                  {/* Fotografia Automotiva de Alta Resolução do Carro */}
-                  <img
-                    src={m.carImage}
-                    alt={m.carAlt}
-                    referrerPolicy="no-referrer"
-                    className="mod-car-img w-full h-full object-cover object-center brightness-95 contrast-105 transition-transform duration-700"
-                  />
+                {/* --- ÁREA CENTRAL / VISUAL DO CARRO EM DESTAQUE --- */}
+                {isActive ? (
+                  <div className="relative flex-1 w-full my-auto flex items-center justify-center overflow-visible min-h-[200px] sm:min-h-[260px] lg:min-h-[300px]">
+                    
+                    {/* Caso GUARD: Escudo e Câmera de Videomonitoramento atrás do carro como no PDF */}
+                    {modality.hasShield && (
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                        {/* Escudo Geométrico estilizado */}
+                        <div className="relative w-64 h-64 sm:w-80 sm:h-80 flex items-center justify-center opacity-35">
+                          <svg
+                            viewBox="0 0 200 240"
+                            className="w-full h-full drop-shadow-[0_0_35px_rgba(184,255,0,0.3)]"
+                            fill="none"
+                          >
+                            <path
+                              d="M 100 10 L 180 45 C 180 130, 150 190, 100 230 C 50 190, 20 130, 20 45 Z"
+                              stroke="#B8FF00"
+                              strokeWidth="2"
+                              fill="rgba(184,255,0,0.03)"
+                            />
+                            {/* Anéis de radar e retículo de monitoramento */}
+                            <circle cx="100" cy="115" r="45" stroke="#B8FF00" strokeWidth="1" strokeDasharray="4 4" />
+                            <circle cx="100" cy="115" r="25" stroke="rgba(255,255,255,0.4)" strokeWidth="1" />
+                            <line x1="100" y1="60" x2="100" y2="170" stroke="rgba(184,255,0,0.25)" strokeWidth="1" />
+                            <line x1="45" y1="115" x2="155" y2="115" stroke="rgba(184,255,0,0.25)" strokeWidth="1" />
+                          </svg>
 
-                  {/* Vinhetas & Gradientes para Integração Cinematográfica com o Fundo Preto */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]/40" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#050505]/60 via-transparent to-transparent" />
+                          {/* Ícone de Câmera discreto no centro do escudo */}
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-full bg-[#050505]/80 border border-[#B8FF00]/40 text-[#B8FF00]">
+                            <Camera className="w-6 h-6 animate-pulse" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
-                  {/* Linha de acabamento na base da foto */}
-                  <div
-                    className="absolute bottom-0 left-0 right-0 h-[2px]"
-                    style={{
-                      background: `linear-gradient(to right, transparent, ${m.themeColor}80, transparent)`,
-                    }}
-                  />
+                    {/* Fotografia Studio do Carro em Destaque */}
+                    <div className="relative z-10 w-full max-w-[620px] transition-all duration-700 transform hover:scale-[1.02]">
+                      {/* Reflexo sutil do chão preto */}
+                      <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-4/5 h-8 bg-[#B8FF00]/10 blur-xl rounded-full pointer-events-none" />
 
-                  {/* Selo no canto da imagem */}
-                  <div className="absolute top-4 right-4 sm:top-6 sm:right-6 px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[11px] font-mono tracking-wider text-neutral-300">
-                    BAHCAR • {m.name}
+                      <img
+                        src={modality.carImage}
+                        alt={modality.carAlt}
+                        className="w-full h-auto max-h-[220px] sm:max-h-[300px] lg:max-h-[340px] object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.9)] rounded-xl"
+                      />
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  // Estado Inativo: Silhueta mínima ou indicação discreta
+                  <div className="hidden lg:flex flex-1 items-center justify-center my-auto opacity-30">
+                    <span className="font-mono text-xs uppercase tracking-widest text-neutral-600 rotate-90 transform origin-center whitespace-nowrap">
+                      Clique para expandir
+                    </span>
+                  </div>
+                )}
 
+                {/* --- FOOTER DO BLOCO / COLUNA --- */}
+                <div className="flex-shrink-0 pt-4 flex items-center justify-between text-xs font-mono">
+                  {isActive ? (
+                    <div className="flex items-center gap-2 text-[#B8FF00]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#B8FF00] animate-pulse" />
+                      <span>CATEGORIA SELECIONADA</span>
+                    </div>
+                  ) : (
+                    <span className="text-neutral-600 group-hover:text-neutral-400 transition-colors">
+                      {modality.name} • BAHCAR
+                    </span>
+                  )}
+
+                  <span className="text-neutral-500">
+                    {idx + 1} de {MODALITIES.length}
+                  </span>
+                </div>
               </div>
             );
           })}
+
         </div>
 
-        {/* Rodapé da Seção Pinned */}
-        <div className="relative z-20 border-t border-white/5 pt-3 flex items-center justify-between text-xs font-mono text-neutral-500">
-          <span>Role para navegar pelas experiências</span>
-          <span className="text-[#B8FF00] font-bold">
-            0{activeIndex + 1} / 03 • {MODALITIES_DATA[activeIndex].name}
+        {/* RODAPÉ INFORMATIVO DA SEÇÃO */}
+        <div className="flex-shrink-0 pt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono text-neutral-500">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#B8FF00]" />
+            <span>Role para alternar entre POP, BLACK e GUARD ou clique nas colunas</span>
+          </div>
+          <span className="text-neutral-400">
+            Santa Maria — RS • Mobilidade Urbana
           </span>
         </div>
       </section>
