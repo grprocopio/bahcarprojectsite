@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace, ui-monospace, SFMono-Regular;
+  --font-display: 'Kanit', 'Saira', sans-serif;
+  --color-bahcar-dark: #050505;
+  --color-bahcar-surface: #111111;
+  --color-bahcar-surface-elevated: #181818;
+  --color-bahcar-lime: #B8FF00;
+  --color-bahcar-lime-hover: #c9ff2e;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #050505;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-heading);
+}
+
+/* Subtle route line animation */
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+.animate-route-flow {
+  animation: dash-flow 8s linear infinite;
+}
+
+/* Pulse radar ring */
+@keyframes radar-ping {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.animate-radar-ping {
+  animation: radar-ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Smooth hidden scrollbar for modal/lists if needed */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Hollow Outline Text (like FUTURE reference image) */
+.outline-text-hollow {
+  -webkit-text-stroke: 1.8px #B8FF00;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 0 16px rgba(184, 255, 0, 0.45));
+}
+
+@media (max-width: 640px) {
+  .outline-text-hollow {
+    -webkit-text-stroke: 1.3px #B8FF00;
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "BahCar — Mobilidade Urbana Santa Maria",
+  "description": "Landing page oficial da BahCar, plataforma de mobilidade urbana criada em Santa Maria/RS. Conectando pessoas à cidade.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
