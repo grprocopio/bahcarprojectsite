@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { ComissaoMotorista } from './components/ComissaoMotorista';
 import { Modalities } from './components/Modalities';
 import { FinalCta } from './components/FinalCta';
 import { Footer } from './components/Footer';
@@ -38,7 +39,10 @@ export default function App() {
           hlsStreamUrl={import.meta.env.VITE_HLS_STREAM_URL}
         />
 
-        {/* 2. Modalidades (POP • BLACK • GUARD com transição sticky no scroll) */}
+        {/* 2. Comissão Clara - Bloco horizontal 16:9 */}
+        <ComissaoMotorista />
+
+        {/* 3. Modalidades (POP • BLACK • GUARD com transição sticky no scroll) */}
         <Modalities />
 
         {/* 4. CTA Final */}
