@@ -17,7 +17,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLaunch, onOpenPartner, hlsStre
   const videoWrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const textContentRef = useRef<HTMLDivElement>(null);
-  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
 
   // Buffer and loading states
   const [videoReady, setVideoReady] = useState(false);
@@ -144,10 +143,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLaunch, onOpenPartner, hlsStre
             const translateY = -self.progress * 30;
             textContentRef.current.style.opacity = `${Math.max(0.1, textOpacity)}`;
             textContentRef.current.style.transform = `translateY(${translateY}px)`;
-          }
-
-          if (scrollIndicatorRef.current) {
-            scrollIndicatorRef.current.style.opacity = `${Math.max(0, 1 - self.progress * 4)}`;
           }
         },
       });
@@ -277,19 +272,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLaunch, onOpenPartner, hlsStre
           <p className="mt-4 sm:mt-5 text-base sm:text-lg text-neutral-300 font-light leading-relaxed max-w-lg">
             Um novo jeito de viver a mobilidade em Santa Maria.
           </p>
-        </div>
-      </div>
-
-      {/* Discrete Scroll Indicator at bottom */}
-      <div
-        ref={scrollIndicatorRef}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1.5 text-neutral-400 pointer-events-none transition-opacity duration-300"
-      >
-        <span className="text-[10px] uppercase tracking-[0.25em] font-medium text-neutral-400">
-          Role para descobrir
-        </span>
-        <div className="w-4 h-7 rounded-full border border-neutral-600 flex items-start justify-center p-0.5">
-          <div className="w-1 h-2 rounded-full bg-[#B8FF00] animate-bounce" />
         </div>
       </div>
     </div>
