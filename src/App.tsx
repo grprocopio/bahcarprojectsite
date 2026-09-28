@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { AboutBahcar } from './components/AboutBahcar';
+import { PitStopBah } from './components/PitStopBah';
+import { Modalities } from './components/Modalities';
 import { FinalCta } from './components/FinalCta';
 import { Footer } from './components/Footer';
 import { PartnerModal } from './components/PartnerModal';
@@ -17,32 +18,42 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-[#B8FF00] selection:text-black">
-      {/* Dynamic Navigation Bar */}
+      {/* Dynamic Navigation Bar with Centered Sticky BahCar Logo */}
       <Navbar
         onOpenPartner={() => setPartnerModalOpen(true)}
         onOpenContact={() => setContactModalOpen(true)}
       />
 
-      {/* Main Sections */}
+      {/* 
+        Estrutura Oficial da Landing:
+        1. Hero com vídeo
+        2. PIT STOP Bah
+        3. Modalidades
+        4. CTA final
+        5. Footer
+      */}
       <main>
-        {/* 1. Hero Section (100vh with GSAP ScrollTrigger Video Scrubbing) */}
+        {/* 1. Hero com vídeo (scroll scrubbed GSAP ScrollTrigger) */}
         <Hero
           onOpenLaunch={() => setLaunchModalOpen(true)}
           onOpenPartner={() => setPartnerModalOpen(true)}
           hlsStreamUrl={import.meta.env.VITE_HLS_STREAM_URL}
         />
 
-        {/* 2. O que é a BahCar */}
-        <AboutBahcar />
+        {/* 2. PIT STOP Bah */}
+        <PitStopBah />
 
-        {/* 3. CTA Final */}
+        {/* 3. Modalidades (POP • BLACK • GUARD com transição sticky no scroll) */}
+        <Modalities />
+
+        {/* 4. CTA Final */}
         <FinalCta
           onOpenLaunch={() => setLaunchModalOpen(true)}
           onOpenPartner={() => setPartnerModalOpen(true)}
         />
       </main>
 
-      {/* Footer */}
+      {/* 5. Footer */}
       <Footer
         onOpenPrivacy={() => setPrivacyModalOpen(true)}
         onOpenContact={() => setContactModalOpen(true)}
