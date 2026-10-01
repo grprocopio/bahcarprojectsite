@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
  * Desativa automaticamente em dispositivos touch/mobile para máxima performance.
  */
 export const HeadlightSpotlight: React.FC = () => {
-  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const spotlightRef = React.useRef<HTMLDivElement>(null);
   const [isPointerDevice, setIsPointerDevice] = useState(false);
 
   useEffect(() => {
@@ -16,25 +16,36 @@ export const HeadlightSpotlight: React.FC = () => {
     setIsPointerDevice(true);
 
     let rafId: number | null = null;
-    let targetX = 0;
-    let targetY = 0;
-    let currentX = 0;
-    let currentY = 0;
+    let targetX = -1000;
+    let targetY = -1000;
+    let currentX = -1000;
+    let currentY = -1000;
 
     const render = () => {
       // Interpolação suave (lerp) para a luz deslizar organicamente
-      currentX += (targetX - currentX) * 0.12;
-      currentY += (targetY - currentY) * 0.12;
-      setPos({ x: Math.round(currentX), y: Math.round(currentY) });
-      rafId = requestAnimationFrame(render);
+      currentX += (targetX - currentX) * 0.15;
+      currentY += (targetY - currentY) * 0.15;
+
+      if (spotlightRef.current) {
+        spotlightRef.current.style.background = `radial-gradient(450px circle at ${Math.round(currentX)}px ${Math.round(currentY)}px, rgba(184, 255, 0, 0.038), rgba(255, 255, 255, 0.015) 35%, transparent 70%)`;
+      }
+
+      // Se já alcançou o alvo, pausa o RAF para economizar 100% de CPU/GPU em repouso
+      if (Math.abs(targetX - currentX) > 0.5 || Math.abs(targetY - currentY) > 0.5) {
+        rafId = requestAnimationFrame(render);
+      } else {
+        rafId = null;
+      }
     };
 
     const handleMouseMove = (e: MouseEvent) => {
       targetX = e.clientX;
       targetY = e.clientY;
-      if (rafId === null) {
+      if (currentX === -1000) {
         currentX = targetX;
         currentY = targetY;
+      }
+      if (rafId === null) {
         rafId = requestAnimationFrame(render);
       }
     };
@@ -47,14 +58,13 @@ export const HeadlightSpotlight: React.FC = () => {
     };
   }, []);
 
-  if (!isPointerDevice || !pos) return null;
+  if (!isPointerDevice) return null;
 
   return (
     <div
-      className="fixed inset-0 pointer-events-none z-[1] transition-opacity duration-300 overflow-hidden"
-      style={{
-        background: `radial-gradient(450px circle at ${pos.x}px ${pos.y}px, rgba(184, 255, 0, 0.038), rgba(255, 255, 255, 0.015) 35%, transparent 70%)`,
-      }}
+      ref={spotlightRef}
+      className="fixed inset-0 pointer-events-none z-[1] transition-opacity duration-300 overflow-hidden transform-gpu will-change-transform"
+      style={{ transform: 'translateZ(0)' }}
     />
   );
 };

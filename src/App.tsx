@@ -10,54 +10,74 @@ import { LaunchModal } from './components/LaunchModal';
 import { PrivacyModal } from './components/PrivacyModal';
 import { ContactModal } from './components/ContactModal';
 
-import { NeonScrollPath } from './components/NeonScrollPath';
 import { HeadlightSpotlight } from './components/HeadlightSpotlight';
 import { SpeedParticles } from './components/SpeedParticles';
+import { GlobalVideoBackground } from './components/GlobalVideoBackground';
 
 export default function App() {
   const [partnerModalOpen, setPartnerModalOpen] = useState(false);
   const [launchModalOpen, setLaunchModalOpen] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
+  // Monitor vertical scroll position and update CSS variable --hero-blur-intensity smoothly
+  React.useEffect(() => {
+    let ticking = false;
+
+    const updateBlurIntensity = () => {
+      const scrollY = window.scrollY;
+      const heroThreshold = window.innerHeight * 0.3; // Começa a transição suave logo ao iniciar o scroll
+      const maxDistance = window.innerHeight * 0.75;
+
+      // Normaliza o fator de intensidade de 0 (hero nítida) até 1 (blur cinematográfico completo)
+      const intensity = Math.max(0, Math.min(1, (scrollY - heroThreshold) / (maxDistance - heroThreshold)));
+
+      document.documentElement.style.setProperty('--hero-blur-intensity', intensity.toFixed(3));
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateBlurIntensity);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    updateBlurIntensity(); // inicializa no carregamento
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-[#B8FF00] selection:text-black relative overflow-x-hidden">
-      {/* Facho de farol LED seguindo cursor no desktop & partículas sutis */}
-      <HeadlightSpotlight />
-      <SpeedParticles />
+      {/* 
+        Vídeo em Tela Cheia Cobrindo 100% do Site:
+        - Na Hero: vídeo nítido acompanhando a animação de scroll
+        - Após passar da Hero: transição suave para efeito embaçado (blur) e pouca exposição (low exposure)
+        para leitura cinematográfica perfeita de todas as seções
+      */}
+      <GlobalVideoBackground hlsStreamUrl={import.meta.env.VITE_HLS_STREAM_URL} />
 
-      {/* Dynamic Navigation Bar with Centered Sticky BahCar Logo */}
-      <Navbar
-        onOpenPartner={() => setPartnerModalOpen(true)}
-        onOpenContact={() => setContactModalOpen(true)}
-      />
+      {/* Glassmorphic Navigation Bar with Centered BahCar® Typography */}
+      <Navbar />
 
-      <main>
-        {/* 1. Hero com vídeo (scroll scrubbed GSAP ScrollTrigger) */}
-        <Hero
+      <main className="relative z-10">
+        {/* 1. Hero com título original limpo sobre o vídeo fullscreen */}
+        <Hero />
+
+        {/* 2. Comissão Clara - Bloco horizontal 16:9 sobre o vídeo com baixa exposição */}
+        <ComissaoMotorista />
+
+        {/* 3. Modalidades: POP, BLACK e GUARD */}
+        <Modalities />
+
+        {/* 4. CTA Final */}
+        <FinalCta
           onOpenLaunch={() => setLaunchModalOpen(true)}
           onOpenPartner={() => setPartnerModalOpen(true)}
-          hlsStreamUrl={import.meta.env.VITE_HLS_STREAM_URL}
         />
-
-        {/* Seções pós-vídeo com a linha neon de baixa exposição e o carro em trajeto no fundo */}
-        <div className="relative w-full">
-          <NeonScrollPath />
-
-          <div className="relative z-10">
-            {/* 2. Comissão Clara - Bloco horizontal 16:9 */}
-            <ComissaoMotorista />
-
-            {/* 3. Modalidades: POP, BLACK e GUARD */}
-            <Modalities />
-
-            {/* 4. CTA Final */}
-            <FinalCta
-              onOpenLaunch={() => setLaunchModalOpen(true)}
-              onOpenPartner={() => setPartnerModalOpen(true)}
-            />
-          </div>
-        </div>
       </main>
 
       {/* 5. Footer */}

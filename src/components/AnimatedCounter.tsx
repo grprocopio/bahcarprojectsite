@@ -29,15 +29,19 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
     const endVal = value;
     startTimeRef.current = null;
 
-    if (Math.abs(startVal - endVal) < 0.01) {
+    const diff = Math.abs(startVal - endVal);
+    if (diff < 0.01) {
       setDisplayValue(endVal);
       return;
     }
 
+    // Se a variação for pequena (arraste contínuo do slider), responde na hora sem acumular fila de frames
+    const effectiveDuration = diff <= 2 ? 60 : Math.min(duration, 140);
+
     const animate = (timestamp: number) => {
       if (!startTimeRef.current) startTimeRef.current = timestamp;
       const elapsed = timestamp - startTimeRef.current;
-      const progress = Math.min(1, elapsed / duration);
+      const progress = Math.min(1, elapsed / effectiveDuration);
       // Easing suave (easeOutQuad)
       const easeOut = 1 - (1 - progress) * (1 - progress);
       const current = startVal + (endVal - startVal) * easeOut;

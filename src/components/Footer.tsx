@@ -8,9 +8,9 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onOpenPrivacy, onOpenContact }) => {
   return (
-    <footer className="relative w-full py-16 bg-[#050505] text-white border-t border-white/10">
+    <footer className="relative w-full py-16 bg-transparent text-white">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-12 border-b border-white/5">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-12">
           {/* Brand & City */}
           <div>
             <BahCarLogo size="md" />

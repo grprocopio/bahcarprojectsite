@@ -13,11 +13,9 @@ export const FinalCta: React.FC<FinalCtaProps> = ({ onOpenLaunch, onOpenPartner 
   return (
     <section
       id="final-cta"
-      className="relative w-full py-28 sm:py-36 lg:py-48 bg-[#050505] text-white border-t border-white/[0.08] flex items-center justify-center overflow-hidden"
+      className="relative w-full py-28 sm:py-36 lg:py-48 bg-transparent text-white flex items-center justify-center overflow-hidden"
     >
-      {/* Background Ambience: Cinematic glow matching Hero video street vibe */}
-      <div className="absolute inset-0 hairline-grid opacity-30 pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[#B8FF00]/[0.035] blur-[180px] pointer-events-none" />
+      {/* Main Campaign Closing Narrative */}
 
       {/* Main Campaign Closing Narrative */}
       <div
