@@ -13,20 +13,24 @@ export const Hero: React.FC = () => {
     const container = containerRef.current;
     if (!container) return;
 
+    // Duração de rolagem sincronizada com o vídeo para manter a tela nítida até a placa da BahCar ficar visível
+    const pinDistance = Math.max(1800, Math.round(window.innerHeight * 2.2));
+
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: container,
         start: 'top top',
-        end: '+=450',
+        end: `+=${pinDistance}`,
         pin: true,
         pinSpacing: true,
         scrub: 0.5,
         anticipatePin: 1,
         onUpdate: (self) => {
           if (textContentRef.current) {
-            // Fade out smoothly and quickly as user starts scrolling
-            const textOpacity = 1 - Math.max(0, (self.progress - 0.25) * 2.2);
-            const translateY = -self.progress * 35;
+            // Texto desvanece suavemente no início (primeiros 15% do percurso),
+            // deixando o restante do trajeto 100% livre para visualização do carro e da placa da BahCar
+            const textOpacity = 1 - Math.max(0, (self.progress - 0.04) * 6.0);
+            const translateY = -self.progress * 45;
             textContentRef.current.style.opacity = `${Math.max(0, textOpacity)}`;
             textContentRef.current.style.transform = `translate3d(0, ${translateY}px, 0)`;
           }

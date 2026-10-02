@@ -134,19 +134,11 @@ export const GlobalVideoBackground: React.FC<GlobalVideoBackgroundProps> = ({ hl
         const current = video.currentTime;
         const diff = targetTime - current;
 
-        if (Math.abs(diff) > 0.003) {
-          const nextTime = current + diff * 0.28;
+        if (Math.abs(diff) > 0.002) {
+          const lerp = Math.abs(diff) > 0.4 ? 0.55 : 0.36;
+          const nextTime = current + diff * lerp;
           const clampedTime = Math.max(0, Math.min(video.duration - 0.01, nextTime));
-
-          if ('fastSeek' in video && typeof (video as HTMLVideoElement & { fastSeek?: (t: number) => void }).fastSeek === 'function') {
-            try {
-              (video as HTMLVideoElement & { fastSeek: (t: number) => void }).fastSeek(clampedTime);
-            } catch {
-              video.currentTime = clampedTime;
-            }
-          } else {
-            video.currentTime = clampedTime;
-          }
+          video.currentTime = clampedTime;
 
           animFrameId = requestAnimationFrame(tick);
           return;
@@ -168,12 +160,12 @@ export const GlobalVideoBackground: React.FC<GlobalVideoBackgroundProps> = ({ hl
     };
 
     // ScrollTrigger on window scroll:
-    // First 1600px: Hero phase scrubs the video frames smoothly while crisp.
-    // Video responds instantly to scroll events with GPU-optimized timeline
+    // Scroll extendido para o cliente ver o carro em movimento com nitidez total
+    const scrollDistance = Math.max(1800, typeof window !== 'undefined' ? window.innerHeight * 2.2 : 1800);
     const st = ScrollTrigger.create({
       trigger: document.body,
       start: 'top top',
-      end: '+=1600',
+      end: `+=${scrollDistance}`,
       scrub: 0.1,
       onUpdate: (self) => {
         const dur = (video && video.duration && !isNaN(video.duration)) ? video.duration : videoDuration;
@@ -198,6 +190,7 @@ export const GlobalVideoBackground: React.FC<GlobalVideoBackgroundProps> = ({ hl
       */}
       <video
         ref={videoRef}
+        src={videoSrc}
         muted
         playsInline
         autoPlay={false}
@@ -206,20 +199,22 @@ export const GlobalVideoBackground: React.FC<GlobalVideoBackgroundProps> = ({ hl
         // @ts-ignore
         webkit-playsinline="true"
         x5-playsinline="true"
-        className="w-full h-full object-cover object-center filter brightness-[1.0] contrast-[1.08] transform-gpu will-change-transform"
+        className="w-full h-full object-cover object-center filter brightness-[1.04] contrast-[1.06] transform-gpu will-change-transform"
         style={{ transform: 'translateZ(0)' }}
-      />
+      >
+        <source src={videoSrc} type="video/mp4" />
+      </video>
 
       {/* 
         Dynamic Low-Exposure Tint Layer:
-        Escurece progressivamente de forma suave e homogênea (preto puro) conforme desce da Hero,
-        mantendo a leitura das seções perfeita sem criar linhas de corte ou diferenças de cor.
+        Levemente escurecido (apenas 12%) na Hero para destacar o carro com brilho e cor fiéis,
+        e escurece progressivamente com o blur apenas ao avançar para as demais seções.
       */}
       <div
         className="absolute inset-0 pointer-events-none transition-none transform-gpu"
         style={{
           transform: 'translateZ(0)',
-          backgroundColor: 'rgba(5, 5, 5, calc(0.20 + var(--hero-blur-intensity, 0) * 0.45))',
+          backgroundColor: 'rgba(5, 5, 5, calc(0.12 + var(--hero-blur-intensity, 0) * 0.55))',
         }}
       />
 

@@ -201,8 +201,8 @@ export const Modalities: React.FC = () => {
           </button>
 
           {/* ÁREA CENTRAL: O CARRO DA MODALIDADE ATIVA (EXPANDIDO EM MOBILE E DESKTOP) */}
-          <div className="relative w-full flex items-center justify-center min-h-[200px] sm:min-h-[420px] md:min-h-[520px] lg:min-h-[580px] xl:min-h-[640px] my-2 sm:my-6 transform-gpu overflow-visible">
-            <picture className="w-full flex items-center justify-center">
+          <div className="relative w-full flex items-center justify-center min-h-[200px] sm:min-h-[420px] md:min-h-[520px] lg:min-h-[580px] xl:min-h-[640px] my-2 sm:my-6 transform-gpu overflow-visible bg-transparent">
+            <picture className="w-full flex items-center justify-center bg-transparent">
               {/* No mobile (telas até 640px), carrega o card dedicado ampliado da modalidade selecionada */}
               <source
                 media="(max-width: 640px)"
@@ -215,7 +215,7 @@ export const Modalities: React.FC = () => {
                 alt={currentModality.alt}
                 width={1488}
                 height={518}
-                className={`relative z-10 w-full max-w-[96vw] sm:max-w-[750px] md:max-w-[960px] lg:max-w-[1180px] xl:max-w-[1360px] 2xl:max-w-[1450px] h-auto object-contain drop-shadow-[0_24px_60px_rgba(0,0,0,0.96)] select-none transform-gpu transition-all duration-300 ease-out ${
+                className={`relative z-10 w-full max-w-[96vw] sm:max-w-[750px] md:max-w-[960px] lg:max-w-[1180px] xl:max-w-[1360px] 2xl:max-w-[1450px] h-auto object-contain select-none transform-gpu transition-all duration-300 ease-out filter drop-shadow-[0_16px_36px_rgba(0,0,0,0.65)] ${
                   direction === 'right' ? 'animate-drive-in-right' : 'animate-drive-in-left'
                 }`}
                 loading="eager"

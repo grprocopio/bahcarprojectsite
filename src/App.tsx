@@ -25,11 +25,15 @@ export default function App() {
 
     const updateBlurIntensity = () => {
       const scrollY = window.scrollY;
-      const heroThreshold = window.innerHeight * 0.3; // Começa a transição suave logo ao iniciar o scroll
-      const maxDistance = window.innerHeight * 0.75;
+      // Garante que o vídeo role até a placa da BahCar ficar 100% visível com nitidez total
+      const heroPinDistance = Math.max(1800, window.innerHeight * 2.2);
+      // O blur só começa a aparecer quando o usuário passa da exibição da placa da BahCar
+      const heroThreshold = heroPinDistance * 0.90; // 90% do vídeo percorrido (placa da BahCar em evidência máxima)
+      const maxDistance = heroPinDistance + Math.max(400, window.innerHeight * 0.5);
 
-      // Normaliza o fator de intensidade de 0 (hero nítida) até 1 (blur cinematográfico completo)
-      const intensity = Math.max(0, Math.min(1, (scrollY - heroThreshold) / (maxDistance - heroThreshold)));
+      // Normaliza o fator de intensidade: 0 durante toda a exibição do carro e da placa, transitando para 1 na próxima seção
+      const rawIntensity = (scrollY - heroThreshold) / (maxDistance - heroThreshold);
+      const intensity = Math.max(0, Math.min(1, rawIntensity));
 
       document.documentElement.style.setProperty('--hero-blur-intensity', intensity.toFixed(3));
       ticking = false;
