@@ -19,9 +19,9 @@ export const LaunchModal: React.FC<LaunchModalProps> = ({ isOpen, onClose }) => 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl">
       <div 
-        className="relative w-full max-w-md bg-[#090909] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl text-left"
+        className="relative w-full max-w-md glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl text-left bg-[#0c0d12]/90"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -35,15 +35,15 @@ export const LaunchModal: React.FC<LaunchModalProps> = ({ isOpen, onClose }) => 
         {!registered ? (
           <div>
             <p className="text-xs font-mono font-medium tracking-[0.2em] text-[#B8FF00] uppercase mb-2">
-              Lançamento Oficial
+              Passageiro · Santa Maria
             </p>
             
             <h3 className="text-2xl font-bold font-heading text-white tracking-tight">
-              Conheça a BahCar em primeira mão
+              Viaje com a BahCar
             </h3>
             
             <p className="text-sm text-neutral-300 mt-2 leading-relaxed">
-              O aplicativo está em fase final de lançamento em Santa Maria/RS. Deixe seu WhatsApp ou e-mail para receber acesso prioritário.
+              O aplicativo está em fase final de lançamento em Santa Maria. Cadastre seu WhatsApp ou e-mail para receber acesso prioritário às primeiras viagens.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -63,10 +63,10 @@ export const LaunchModal: React.FC<LaunchModalProps> = ({ isOpen, onClose }) => 
 
               <button
                 type="submit"
-                className="w-full bg-[#B8FF00] text-black font-semibold font-heading py-3 px-6 rounded-xl hover:bg-[#c9ff2e] transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#B8FF00] text-black font-semibold font-heading py-3 px-6 rounded-xl hover:bg-[#c9ff2e] transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Bell className="w-4 h-4" />
-                <span>Avise-me no lançamento</span>
+                <span>Quero ser passageiro</span>
               </button>
             </form>
           </div>

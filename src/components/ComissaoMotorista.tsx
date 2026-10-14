@@ -1,16 +1,15 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { ArrowUpRight } from 'lucide-react';
 import { useScrollReveal } from '../hooks/useScrollPosition';
-import { AnimatedCounter } from './AnimatedCounter';
 
-export const ComissaoMotorista: React.FC = () => {
-  // Reveal hooks para animação progressiva de fade-in no scroll (aparecimento ágil)
-  const [headerRef, headerVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.01, rootMargin: '0px 0px 200px 0px' });
-  const [cockpitRef, cockpitVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.01, rootMargin: '0px 0px 180px 0px' });
-  const [cardsRef, cardsVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.01, rootMargin: '0px 0px 150px 0px' });
+interface ComissaoMotoristaProps {
+  onOpenPartner?: () => void;
+}
 
-  // Começando a partir de R$ 10,00
-  const [rideValue, setRideValue] = useState<number>(27.50);
+export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
+  const [headerRef, headerVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.05 });
+  const [cockpitRef, cockpitVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.05 });
+
+  const [rideValue, setRideValue] = useState<number>(35);
   const trackRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef<boolean>(false);
 
@@ -26,15 +25,15 @@ export const ComissaoMotorista: React.FC = () => {
   const competitorCommission = rideValue * competitorRate;
   const competitorNet = rideValue - competitorCommission;
 
-  const difference = bahcarNet - competitorNet;
-
-  // Percentual para o preenchimento fluido da barra
   const fillPercent = Math.max(0, Math.min(100, ((rideValue - minVal) / (maxVal - minVal)) * 100));
 
-  // Centavos alternados realistas para simulação de corridas reais (0.40, 0.50, 0.30)
-  const centsPattern = [0.00, 0.40, 0.50, 0.30, 0.80, 0.20, 0.50, 0.70, 0.40, 0.90];
+  const formatBRL = (val: number) => {
+    return val.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
 
-  // Cálculo de valor suave a partir da posição X com centavos realistas
   const updateValueFromClientX = useCallback((clientX: number) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
@@ -42,25 +41,14 @@ export const ComissaoMotorista: React.FC = () => {
     const clampedX = Math.max(0, Math.min(rect.width, clientX - rect.left));
     const ratio = clampedX / rect.width;
     const rawVal = minVal + ratio * (maxVal - minVal);
-    
-    const integerPart = Math.floor(rawVal);
-    const fractionPart = rawVal - integerPart;
-    // Seleciona o centavo da tabela alternada com base na proximidade
-    const idx = Math.min(centsPattern.length - 1, Math.floor(fractionPart * centsPattern.length));
-    const cents = centsPattern[idx];
-    const finalVal = Math.min(maxVal, Math.max(minVal, Number((integerPart + cents).toFixed(2))));
-    
-    setRideValue(finalVal);
+    setRideValue(Math.round(rawVal));
   }, [minVal, maxVal]);
 
-  // Pointer down inicia captura direta sem aguardar soltar o dedo
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     isDraggingRef.current = true;
     try {
       e.currentTarget.setPointerCapture(e.pointerId);
-    } catch {
-      // Ignorar caso não suportado
-    }
+    } catch {}
     updateValueFromClientX(e.clientX);
   };
 
@@ -70,228 +58,212 @@ export const ComissaoMotorista: React.FC = () => {
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDraggingRef.current) return;
     isDraggingRef.current = false;
     try {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    } catch {
-      // Ignorar caso já liberado
-    }
+      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      }
+    } catch {}
   };
 
-  // Fallback nativo caso use teclado ou acessibilidade
   const handleNativeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawVal = parseFloat(e.target.value);
     if (!isNaN(rawVal)) {
-      const integerPart = Math.floor(rawVal);
-      const fractionPart = rawVal - integerPart;
-      const idx = Math.min(centsPattern.length - 1, Math.floor(fractionPart * centsPattern.length));
-      const cents = centsPattern[idx];
-      const finalVal = Math.min(maxVal, Math.max(minVal, Number((integerPart + cents).toFixed(2))));
-      setRideValue(finalVal);
+      setRideValue(Math.round(rawVal));
     }
   };
 
   return (
     <section
       id="comissao-clara"
-      className="relative w-full pt-8 sm:pt-14 pb-16 sm:pb-24 px-5 sm:px-8 lg:px-16 xl:px-20 bg-transparent text-white overflow-hidden select-none"
+      className="relative w-full -mt-1 py-20 sm:py-28 lg:py-36 px-5 sm:px-8 lg:px-16 xl:px-20 bg-[#050608] text-white overflow-hidden select-none"
     >
-      <div className="relative z-10 w-full max-w-[1500px] mx-auto flex flex-col gap-10 lg:gap-12">
+      {/* Luz ambiente suave de fundo (radial-gradient puro sem blur filter para evitar artefatos de listra GPU) */}
+      <div 
+        className="absolute inset-0 bg-[radial-gradient(ellipse_700px_450px_at_50%_50%,rgba(184,255,0,0.035),transparent_70%)] pointer-events-none"
+        aria-hidden="true"
+      />
+
+      <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col gap-10 lg:gap-14">
         
-        {/* EDITORIAL STATEMENT - DIRETO E PROFISSIONAL */}
+        {/* CABEÇALHO DIRETO E LIMPO (sem a tag 'TRANSPARÊNCIA COM QUEM DIRIGE') */}
         <div
           ref={headerRef}
-          className={`max-w-5xl flex flex-col scroll-reveal ${headerVisible ? 'is-revealed' : ''}`}
+          className={`max-w-3xl flex flex-col scroll-reveal ${headerVisible ? 'is-revealed' : ''}`}
         >
           <h2
-            className="text-[clamp(1.75rem,5.5vw,4.5rem)] italic font-black uppercase tracking-tight sm:tracking-[0.02em] leading-tight text-white whitespace-normal"
+            className="text-[clamp(2.2rem,5vw,4.5rem)] italic font-black uppercase tracking-tight leading-[0.98] text-white"
             style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}
           >
-            <span className="inline-block">TAXA FIXA DE 16%.</span>{' '}
-            <span className="text-[#B8FF00] inline-block">O RESTANTE FICA NO SEU BOLSO.</span>
+            <span>TAXA FIXA DE 16%. </span>
+            <span className="text-[#B8FF00] drop-shadow-[0_0_30px_rgba(184,255,0,0.35)]">
+              O RESTO É SEU.
+            </span>
           </h2>
+          <p className="mt-4 text-base sm:text-lg text-neutral-300 leading-relaxed font-normal">
+            Sem descontos surpresa ou tarifas confusas de até 40%. Você sabe exatamente quanto ganha em cada corrida.
+          </p>
         </div>
 
-        {/* CÁLCULOS & SIMULAÇÃO EM TEMPO REAL */}
-        <div className="w-full pt-4">
-          
-          {/* Header do Cockpit: Controle de Simulação */}
-          <div
-            ref={cockpitRef}
-            className={`flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 scroll-reveal scroll-reveal-delay-1 ${cockpitVisible ? 'is-revealed' : ''}`}
-          >
-            {/* Título de chamada para a simulação */}
-            <div className="flex items-center">
+        {/* CONTAINER DO SIMULADOR EM DESIGN GLASSMORPHISM */}
+        <div
+          ref={cockpitRef}
+          className={`relative w-full rounded-3xl glass-panel p-6 sm:p-10 lg:p-12 overflow-hidden scroll-reveal scroll-reveal-delay-1 ${
+            cockpitVisible ? 'is-revealed' : ''
+          }`}
+        >
+          {/* Brilho interno do vidro */}
+          <div 
+            className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#B8FF00]/[0.06] blur-2xl pointer-events-none" 
+            aria-hidden="true" 
+          />
+          <div 
+            className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-white/[0.02] blur-2xl pointer-events-none" 
+            aria-hidden="true" 
+          />
+
+          {/* Barra Superior do Ajuste de Valor */}
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-8 border-b border-white/10">
+            <div>
+              <span className="font-mono text-[11px] uppercase tracking-widest text-neutral-400 block mb-1">
+                Simulador de Rendimento
+              </span>
               <h3
-                className="text-[clamp(1.15rem,3.2vw,1.75rem)] italic font-black uppercase tracking-[0.03em] sm:tracking-[0.05em] text-white leading-tight"
-                style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}
+                className="text-2xl sm:text-3xl font-black italic uppercase text-white"
+                style={{ fontFamily: "'Kanit', sans-serif" }}
               >
-                Simulação de Ganho Líquido por Corrida
+                Ajuste o Valor da Corrida
               </h3>
             </div>
 
-            {/* Controle de Simulação Touch Real-Time (integrado sem caixas pesadas) */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 py-2 w-full lg:w-auto">
-              
-              <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-                <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 shrink-0 leading-tight">
-                  Valor bruto:
-                </span>
-                
-                {/* Valor Grande e Nítido com centavos reais */}
-                <span className="text-[clamp(1.5rem,4vw,2.25rem)] font-black font-mono text-[#B8FF00] tracking-tight min-w-[120px] text-right leading-tight">
-                  <AnimatedCounter value={rideValue} prefix="R$ " duration={180} />
-                </span>
-              </div>
-
-              {/* Slider Tátil com Resposta Contínua Instantânea a cada pixel */}
-              <div className="flex items-center gap-3 w-full sm:w-64 md:w-80 select-none">
-                <span className="text-[11px] font-mono text-neutral-500 tabular-nums shrink-0">R$ 10</span>
-                
-                <div
-                  ref={trackRef}
-                  onPointerDown={handlePointerDown}
-                  onPointerMove={handlePointerMove}
-                  onPointerUp={handlePointerUp}
-                  onPointerCancel={handlePointerUp}
-                  className="relative w-full h-11 flex items-center cursor-pointer touch-none"
-                  style={{ touchAction: 'none' }}
-                >
-                  {/* Trilho de Fundo */}
-                  <div className="w-full h-2.5 rounded-full bg-white/10 relative overflow-hidden pointer-events-none">
-                    {/* Barra Preenchida Verde Neon */}
-                    <div
-                      className="absolute top-0 bottom-0 left-0 bg-[#B8FF00] rounded-full"
-                      style={{ width: `${fillPercent}%` }}
-                    />
-                  </div>
-
-                  {/* Thumb / Botão Deslizante com Brilho Neon e Efeito Tátil */}
-                  <div
-                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#B8FF00] border-2 border-black shadow-[0_0_16px_rgba(184,255,0,0.8),0_2px_8px_rgba(0,0,0,0.9)] flex items-center justify-center pointer-events-none active:scale-110"
-                    style={{ left: `${fillPercent}%` }}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-black/40" />
-                  </div>
-
-                  {/* Input de range nativo transparente sobreposto para suporte tátil perfeito em mobile/tablet */}
-                  <input
-                    type="range"
-                    min={minVal}
-                    max={maxVal}
-                    step="1"
-                    value={rideValue}
-                    onChange={handleNativeChange}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20 touch-none"
-                    aria-label="Simular valor da corrida"
-                  />
-                </div>
-
-                <span className="text-[11px] font-mono text-neutral-500 tabular-nums shrink-0">R$ 100</span>
-              </div>
-
+            {/* Display do Valor no Vidro Fosco */}
+            <div className="self-start sm:self-auto flex items-center gap-3 px-6 py-3 rounded-2xl glass-card-subtle border-white/15">
+              <span className="font-mono text-xs text-neutral-400 uppercase tracking-wider">
+                Valor:
+              </span>
+              <span
+                className="text-3xl sm:text-4xl font-black font-mono text-[#B8FF00] drop-shadow-[0_0_12px_rgba(184,255,0,0.35)] tabular-nums"
+                style={{ fontFamily: "'Kanit', monospace" }}
+              >
+                R$ {rideValue},00
+              </span>
             </div>
           </div>
 
-          {/* Cards Lado a Lado: Visual Realista de Extrato de Corrida */}
-          <div
-            ref={cardsRef}
-            className={`grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 scroll-reveal scroll-reveal-delay-2 ${cardsVisible ? 'is-revealed' : ''}`}
-          >
+          {/* Slider Interativo */}
+          <div className="relative z-10 py-6 sm:py-8 flex flex-col gap-3">
+            <div
+              ref={trackRef}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              className="relative w-full h-12 flex items-center cursor-pointer touch-none"
+              style={{ touchAction: 'none' }}
+            >
+              {/* Trilho */}
+              <div className="w-full h-3 rounded-full bg-white/10 relative overflow-hidden pointer-events-none backdrop-blur-md">
+                <div
+                  className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-[#B8FF00]/70 to-[#B8FF00] rounded-full shadow-[0_0_16px_rgba(184,255,0,0.7)]"
+                  style={{ width: `${fillPercent}%` }}
+                />
+              </div>
+
+              {/* Botão de Arraste (Thumb) */}
+              <div
+                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#B8FF00] border-2 border-black shadow-[0_0_20px_rgba(184,255,0,0.8),0_4px_12px_rgba(0,0,0,0.8)] flex items-center justify-center pointer-events-none active:scale-110 transition-transform"
+                style={{ left: `${fillPercent}%` }}
+              >
+                <div className="w-2.5 h-2.5 rounded-full bg-black" />
+              </div>
+
+              <input
+                type="range"
+                min={minVal}
+                max={maxVal}
+                step="1"
+                value={rideValue}
+                onChange={handleNativeChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20 touch-none"
+                aria-label="Simular valor da corrida"
+              />
+            </div>
+          </div>
+
+          {/* CARDS COMPARATIVOS EM GLASSMORPHISM */}
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 pt-2">
             
-            {/* Coluna BahCar - Limpo, Editorial e Aberto */}
-            <div className="relative py-6 sm:py-8 border-b md:border-b-0 md:border-r border-white/10 md:pr-10 flex flex-col justify-between">
+            {/* Card BahCar Glassmorphism Destaque */}
+            <div className="p-6 sm:p-8 rounded-2xl glass-card-accent flex flex-col justify-between">
               <div>
-                <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-[#B8FF00]/20 mb-6">
-                  <div>
-                    <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#B8FF00] block leading-tight">
-                      MODELO BAHCAR
-                    </span>
-                    <span className="text-[clamp(1.125rem,2.8vw,1.25rem)] font-bold text-white font-heading leading-tight">
-                      Você recebe líquido:
+                <div className="flex items-center justify-between pb-4 border-b border-[#B8FF00]/20 mb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#B8FF00] shadow-[0_0_8px_rgba(184,255,0,0.9)]" />
+                    <span
+                      className="text-lg font-black italic uppercase text-white tracking-wide"
+                      style={{ fontFamily: "'Kanit', sans-serif" }}
+                    >
+                      BahCar
                     </span>
                   </div>
-                  <span className="text-[#B8FF00] text-xs font-mono font-bold tracking-wider uppercase whitespace-nowrap leading-tight">
-                    16% retenção fixa
+                  <span className="text-xs font-mono font-bold text-[#B8FF00] uppercase tracking-wider">
+                    Taxa 16% Fixa
                   </span>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-sm text-neutral-300 leading-tight">Corrida de:</span>
-                    <span className="text-sm font-mono text-neutral-400 tabular-nums leading-tight">
-                      <AnimatedCounter value={rideValue} prefix="R$ " duration={180} />
-                    </span>
-                  </div>
-
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-sm text-neutral-300 leading-tight">Taxa BahCar (16%):</span>
-                    <span className="text-sm font-mono text-neutral-400 tabular-nums leading-tight">
-                      <AnimatedCounter value={bahcarCommission} prefix="- R$ " duration={180} />
-                    </span>
-                  </div>
-
-                  <div className="pt-4 border-t border-white/10 flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="text-sm sm:text-base font-bold text-white uppercase tracking-wider leading-tight">
-                      Seu Ganho Líquido:
-                    </span>
-                    <span className="text-[clamp(1.5rem,4.5vw,2.25rem)] font-black font-mono text-[#B8FF00] tabular-nums leading-tight">
-                      <AnimatedCounter value={bahcarNet} prefix="R$ " duration={200} />
-                    </span>
+                <div className="py-2">
+                  <span className="text-xs uppercase font-mono tracking-wider text-neutral-400 block mb-1">
+                    Você recebe líquido por viagem:
+                  </span>
+                  <div
+                    className="text-4xl sm:text-5xl lg:text-6xl font-black italic text-[#B8FF00] drop-shadow-[0_0_20px_rgba(184,255,0,0.35)] tabular-nums"
+                    style={{ fontFamily: "'Kanit', monospace" }}
+                  >
+                    R$ {formatBRL(bahcarNet)}
                   </div>
                 </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between font-mono text-xs text-neutral-300">
+                <span>Taxa da plataforma (16%):</span>
+                <span className="text-white font-bold tabular-nums">R$ {formatBRL(bahcarCommission)}</span>
               </div>
             </div>
 
-            {/* Coluna Concorrência - Tons Neutros Sóbrios */}
-            <div className="py-6 sm:py-8 md:pl-10 flex flex-col justify-between">
+            {/* Card Mercado Tradicional em Vidro Sutil */}
+            <div className="p-6 sm:p-8 rounded-2xl glass-card-subtle flex flex-col justify-between opacity-85 hover:opacity-100 transition-opacity">
               <div>
-                <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-white/10 mb-6">
-                  <div>
-                    <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-neutral-500 block leading-tight">
-                      OUTRAS PLATAFORMAS
-                    </span>
-                    <span className="text-[clamp(1.125rem,2.8vw,1.25rem)] font-bold text-neutral-300 font-heading leading-tight">
-                      Média de mercado:
+                <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-neutral-600" />
+                    <span
+                      className="text-lg font-bold italic uppercase text-neutral-300 tracking-wide"
+                      style={{ fontFamily: "'Kanit', sans-serif" }}
+                    >
+                      Outros Apps
                     </span>
                   </div>
-                  <span className="text-neutral-400 text-xs font-mono tracking-wider uppercase whitespace-nowrap leading-tight">
-                    ~35% retenção
+                  <span className="text-xs font-mono font-medium text-neutral-400 uppercase tracking-wider">
+                    Até 35% retenção
                   </span>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-sm text-neutral-400 leading-tight">Corrida de:</span>
-                    <span className="text-sm font-mono text-neutral-400 tabular-nums leading-tight">
-                      <AnimatedCounter value={rideValue} prefix="R$ " duration={180} />
-                    </span>
-                  </div>
-
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-sm text-neutral-400 leading-tight">Retenção (~35%):</span>
-                    <span className="text-sm font-mono text-red-500/80 tabular-nums leading-tight">
-                      <AnimatedCounter value={competitorCommission} prefix="- R$ " duration={180} />
-                    </span>
-                  </div>
-
-                  <div className="pt-4 border-t border-white/10 flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="text-sm sm:text-base font-bold text-neutral-400 uppercase tracking-wider leading-tight">
-                      Seu Ganho Líquido:
-                    </span>
-                    <span className="text-[clamp(1.5rem,4.5vw,2.25rem)] font-black font-mono text-neutral-400 tabular-nums leading-tight">
-                      <AnimatedCounter value={competitorNet} prefix="R$ " duration={200} />
-                    </span>
+                <div className="py-2">
+                  <span className="text-xs uppercase font-mono tracking-wider text-neutral-500 block mb-1">
+                    Você receberia apenas:
+                  </span>
+                  <div
+                    className="text-4xl sm:text-5xl font-black italic text-neutral-400 tabular-nums"
+                    style={{ fontFamily: "'Kanit', monospace" }}
+                  >
+                    R$ {formatBRL(competitorNet)}
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-neutral-400 font-mono leading-tight">
-                <span className="leading-tight">Diferença a favor do motorista:</span>
-                <span className="font-bold text-[#B8FF00] text-sm tabular-nums whitespace-nowrap leading-tight">
-                  + <AnimatedCounter value={difference} prefix="R$ " duration={200} /> / corrida
-                </span>
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between font-mono text-xs text-neutral-400">
+                <span>Desconto de terceiros (~35%):</span>
+                <span className="text-neutral-300 font-semibold tabular-nums">R$ {formatBRL(competitorCommission)}</span>
               </div>
             </div>
 

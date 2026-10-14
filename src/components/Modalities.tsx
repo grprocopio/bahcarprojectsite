@@ -1,54 +1,88 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { useScrollReveal } from '../hooks/useScrollPosition';
 
 interface ModalityItem {
-  id: 'pop' | 'black' | 'guard';
+  id: 'pop' | 'plus' | 'confort' | 'black';
   name: string;
-  tagline: string;
-  description: string;
-  imageSrc: string;
-  mobileImageSrc: string;
-  alt: string;
+  yearRule: string;
+  summary: string;
   highlights: string[];
+  imageSrc: string;
+  alt: string;
+  models?: string[];
 }
 
 const MODALITIES_LIST: ModalityItem[] = [
   {
     id: 'pop',
     name: 'POP',
-    tagline: 'Deslocamento prático, ágil e acessível.',
-    description: 'A categoria pensada para a dinâmica diária de Santa Maria, unindo alta disponibilidade de motoristas, resposta rápida e o melhor custo por quilômetro rodado.',
-    imageSrc: '/images/pop1.png',
-    mobileImageSrc: '/images/pop_single.png',
-    alt: 'BahCar POP - Mobilidade urbana prática e acessível',
-    highlights: ['Até 4 passageiros', 'Maior disponibilidade', 'Melhor custo-benefício'],
+    yearRule: '2011 em diante',
+    summary: 'Mobilidade ágil, prática e acessível para o dia a dia em Santa Maria.',
+    highlights: ['Carros a partir de 2011', '4 portas com ar-condicionado'],
+    imageSrc: '/images/bahcar_real_pop.jpg',
+    alt: 'BahCar POP - Carros a partir de 2011',
+  },
+  {
+    id: 'plus',
+    name: 'PLUS',
+    yearRule: 'Hatch e Elétrico (2023 em diante)',
+    summary: 'Veículos hatch e elétricos modernos, confortáveis e eficientes.',
+    highlights: ['Hatch e Elétrico', 'Ano 2023 em diante'],
+    imageSrc: '/images/bahcar_real_plus.jpg',
+    alt: 'BahCar PLUS - Hatch e Elétrico',
+  },
+  {
+    id: 'confort',
+    name: 'CONFORT SEDAN',
+    yearRule: 'Sedans 2019 em diante',
+    summary: 'Porta-malas espaçoso e conforto extra para viagens, compras e famílias.',
+    highlights: ['Sedãs a partir de 2019', 'Porta-malas amplo'],
+    imageSrc: '/images/bahcar_real_confort.jpg',
+    alt: 'BahCar CONFORT SEDAN - Sedãs a partir de 2019',
+    models: [
+      'Onix Plus',
+      'Versa',
+      'Virtus',
+      'Cronos',
+      'Yaris Sedan',
+      'HB20S',
+      'Kicks',
+      'Duster',
+      'Peugeot 2008',
+    ],
   },
   {
     id: 'black',
     name: 'BLACK',
-    tagline: 'Sofisticação, conforto e padrão executivo.',
-    description: 'Veículos sedãs e SUVs selecionados, ar-condicionado sempre ligado e motoristas parceiros com as pontuações mais altas da plataforma para uma viagem impecável.',
-    imageSrc: '/images/black2.png',
-    mobileImageSrc: '/images/black_single.png',
-    alt: 'BahCar BLACK - Categoria executiva premium',
-    highlights: ['Sedãs e SUVs selecionados', 'Acabamento superior', 'Motoristas Top-Rated'],
-  },
-  {
-    id: 'guard',
-    name: 'GUARD',
-    tagline: 'Segurança reforçada e proteção tecnológica.',
-    description: 'Viagens com protocolos dedicados de segurança, supervisão ativa de trajeto e suporte preferencial para passageiros que priorizam tranquilidade total.',
-    imageSrc: '/images/guard3.png',
-    mobileImageSrc: '/images/guard_single.png',
-    alt: 'BahCar GUARD - Proteção e segurança inteligente',
-    highlights: ['Rota supervisionada', 'Canal prioritário', 'Protocolo preventivo'],
+    yearRule: 'Modelos Homologados',
+    summary: 'Padrão executivo premium com os motoristas parceiros mais bem avaliados.',
+    highlights: ['Modelos homologados', 'Motoristas Top-Rated'],
+    imageSrc: '/images/bahcar_real_black.jpg',
+    alt: 'BahCar BLACK - Categoria executiva',
+    models: [
+      'Corolla',
+      'Creta',
+      'BYD Dolphin',
+      'Tracker',
+      'Sentra 25/26',
+      'Duster 24/25/26',
+      'Cerato',
+      'Jetta',
+      'Kicks',
+    ],
   },
 ];
 
 export const Modalities: React.FC = () => {
+  const [headerRef, headerVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.02 });
+  const [showroomRef, showroomVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.02 });
+  const [detailsRef, detailsVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.02 });
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState<'right' | 'left'>('right');
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showModels, setShowModels] = useState(false);
   const touchStartXRef = useRef<number>(0);
   const touchDeltaXRef = useRef<number>(0);
   const isSwipingRef = useRef<boolean>(false);
@@ -56,12 +90,12 @@ export const Modalities: React.FC = () => {
 
   const currentModality = MODALITIES_LIST[activeIndex];
 
-  // Troca de modalidade rápida e fluida (duração total da transição ~320ms)
   const selectModality = useCallback((index: number) => {
     if (index === activeIndex || isAnimating) return;
     setDirection(index > activeIndex ? 'right' : 'left');
     setIsAnimating(true);
     setActiveIndex(index);
+    setShowModels(false);
     setTimeout(() => {
       setIsAnimating(false);
     }, 320);
@@ -77,11 +111,11 @@ export const Modalities: React.FC = () => {
     selectModality(prevIdx);
   }, [activeIndex, selectModality]);
 
-  // Transição automática suave a cada 7 segundos caso o usuário não interaja
   useEffect(() => {
     autoPlayTimerRef.current = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % MODALITIES_LIST.length);
-    }, 7000);
+      setShowModels(false);
+    }, 10000);
 
     return () => {
       if (autoPlayTimerRef.current) clearInterval(autoPlayTimerRef.current);
@@ -93,11 +127,11 @@ export const Modalities: React.FC = () => {
       clearInterval(autoPlayTimerRef.current);
       autoPlayTimerRef.current = setInterval(() => {
         setActiveIndex((prev) => (prev + 1) % MODALITIES_LIST.length);
-      }, 7000);
+        setShowModels(false);
+      }, 10000);
     }
   };
 
-  // Gestos de toque horizontal (Swipe rápido no celular e tablet)
   const handleTouchStart = (e: React.TouchEvent) => {
     resetAutoTimer();
     touchStartXRef.current = e.touches[0].clientX;
@@ -124,7 +158,7 @@ export const Modalities: React.FC = () => {
   return (
     <section
       id="modalidades"
-      className="relative w-full py-16 sm:py-24 lg:py-28 px-4 sm:px-6 lg:px-12 bg-transparent text-white overflow-hidden select-none"
+      className="relative w-full py-20 sm:py-28 lg:py-36 px-5 sm:px-8 lg:px-16 bg-[#050608] text-white overflow-hidden select-none"
     >
       <div
         onTouchStart={handleTouchStart}
@@ -132,58 +166,62 @@ export const Modalities: React.FC = () => {
         onTouchEnd={handleTouchEnd}
         className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center"
       >
-        {/* TÍTULO MODALIDADES PREVISTAS NO APLICATIVO COM FONTE GROSSA E IMPACTANTE */}
-        <div className="w-full text-center pb-6 sm:pb-8">
-          <h2
-            className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl italic font-black uppercase tracking-[0.03em] leading-tight text-white"
-            style={{ fontFamily: "'Kanit', 'Montserrat', sans-serif", fontWeight: 900 }}
-          >
-            <span>MODALIDADES PREVISTAS </span>
-            <span className="text-[#B8FF00]">
-              NO APLICATIVO
-            </span>
-          </h2>
-        </div>
+        {/* TÍTULO E NAVEGAÇÃO DA SEÇÃO */}
+        <div
+          ref={headerRef}
+          className={`w-full flex flex-col items-center scroll-reveal ${headerVisible ? 'is-revealed' : ''}`}
+        >
+          <div className="w-full text-center pb-8 sm:pb-12">
+            <h2
+              className="text-[clamp(2rem,5.5vw,4.5rem)] italic font-black uppercase tracking-tight text-white leading-tight"
+              style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}
+            >
+              <span>MODALIDADES </span>
+              <span className="text-[#B8FF00] drop-shadow-[0_0_28px_rgba(184,255,0,0.35)]">
+                BAH CAR
+              </span>
+            </h2>
+          </div>
 
-        {/* NAVEGAÇÃO PRINCIPAL DAS MODALIDADES: POP | BLACK | GUARD */}
-        <div className="w-full flex items-center justify-center pb-8 sm:pb-12">
-          <div className="inline-flex items-center p-1.5 rounded-2xl bg-white/[0.05] border border-white/10 backdrop-blur-xl shadow-2xl">
-            {MODALITIES_LIST.map((item, idx) => {
-              const isActive = activeIndex === idx;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    resetAutoTimer();
-                    selectModality(idx);
-                  }}
-                  className={`relative px-6 sm:px-10 md:px-12 py-3 sm:py-3.5 rounded-xl font-black italic tracking-wide uppercase transition-all duration-300 cursor-pointer ${
-                    isActive
-                      ? 'bg-[#B8FF00] text-black shadow-[0_0_28px_rgba(184,255,0,0.5)] scale-[1.03]'
-                      : 'text-neutral-400 hover:text-white hover:bg-white/[0.06]'
-                  }`}
-                  style={{ fontFamily: "'Kanit', 'Saira', sans-serif" }}
-                  aria-label={`Selecionar modalidade ${item.name}`}
-                >
-                  <span className="text-xl sm:text-2xl md:text-3xl leading-none">
+          {/* NAVEGAÇÃO ENTRE AS 4 MODALIDADES */}
+          <div className="w-full flex items-center justify-center pb-8 sm:pb-12">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 rounded-2xl glass-card-subtle">
+              {MODALITIES_LIST.map((item, idx) => {
+                const isActive = activeIndex === idx;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      resetAutoTimer();
+                      selectModality(idx);
+                    }}
+                    className={`relative px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl font-black italic tracking-wide uppercase transition-all duration-300 cursor-pointer text-base sm:text-xl md:text-2xl leading-none ${
+                      isActive
+                        ? 'bg-[#B8FF00] text-black shadow-[0_0_25px_rgba(184,255,0,0.5)] scale-105'
+                        : 'text-neutral-400 hover:text-white hover:bg-white/[0.05]'
+                    }`}
+                    style={{ fontFamily: "'Kanit', 'Saira', sans-serif" }}
+                    aria-label={`Ver categoria ${item.name}`}
+                  >
                     {item.name}
-                  </span>
-                </button>
-              );
-            })}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/* CONTAINER PRINCIPAL DA EXPERIÊNCIA INTERATIVA (EXPANDIDO PARA MOBILE) */}
-        <div className="relative w-full px-1 sm:px-16 lg:px-20 py-2 sm:py-6 overflow-visible flex flex-col items-center">
-          
-          {/* Botões de navegação lateral para desktop e tablet - posicionados bem nas pontas externas para nunca sobrepor o conteúdo */}
+        {/* SHOWROOM DO VEÍCULO COM FOTOS REALISTAS NACIONAIS */}
+        <div
+          ref={showroomRef}
+          className={`relative w-full flex items-center justify-center py-2 sm:py-4 scroll-reveal scroll-reveal-delay-1 ${showroomVisible ? 'is-revealed' : ''}`}
+        >
           <button
             onClick={() => {
               resetAutoTimer();
               prevModality();
             }}
-            className="hidden md:flex absolute -left-2 lg:-left-6 xl:-left-10 top-1/2 -translate-y-1/2 z-30 w-12 h-12 lg:w-14 lg:h-14 items-center justify-center rounded-full bg-black/60 hover:bg-black/90 border border-white/20 hover:border-[#B8FF00]/60 text-white hover:text-[#B8FF00] transition-all duration-200 cursor-pointer active:scale-95 shadow-2xl backdrop-blur-md"
+            className="hidden lg:flex absolute left-0 xl:-left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 items-center justify-center rounded-full glass-card-subtle hover:border-[#B8FF00] text-white hover:text-[#B8FF00] transition-all cursor-pointer shadow-2xl backdrop-blur-md"
             aria-label="Modalidade anterior"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -194,67 +232,134 @@ export const Modalities: React.FC = () => {
               resetAutoTimer();
               nextModality();
             }}
-            className="hidden md:flex absolute -right-2 lg:-right-6 xl:-right-10 top-1/2 -translate-y-1/2 z-30 w-12 h-12 lg:w-14 lg:h-14 items-center justify-center rounded-full bg-black/60 hover:bg-black/90 border border-white/20 hover:border-[#B8FF00]/60 text-white hover:text-[#B8FF00] transition-all duration-200 cursor-pointer active:scale-95 shadow-2xl backdrop-blur-md"
+            className="hidden lg:flex absolute right-0 xl:-right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 items-center justify-center rounded-full glass-card-subtle hover:border-[#B8FF00] text-white hover:text-[#B8FF00] transition-all cursor-pointer shadow-2xl backdrop-blur-md"
             aria-label="Próxima modalidade"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
 
-          {/* ÁREA CENTRAL: O CARRO DA MODALIDADE ATIVA (EXPANDIDO EM MOBILE E DESKTOP) */}
-          <div className="relative w-full flex items-center justify-center min-h-[200px] sm:min-h-[420px] md:min-h-[520px] lg:min-h-[580px] xl:min-h-[640px] my-2 sm:my-6 transform-gpu overflow-visible bg-transparent">
-            <picture className="w-full flex items-center justify-center bg-transparent">
-              {/* No mobile (telas até 640px), carrega o card dedicado ampliado da modalidade selecionada */}
-              <source
-                media="(max-width: 640px)"
-                srcSet={currentModality.mobileImageSrc}
-              />
-              {/* Em tablets e desktops, carrega a visão expandida completa */}
-              <img
-                key={currentModality.id}
-                src={currentModality.imageSrc}
-                alt={currentModality.alt}
-                width={1488}
-                height={518}
-                className={`relative z-10 w-full max-w-[96vw] sm:max-w-[750px] md:max-w-[960px] lg:max-w-[1180px] xl:max-w-[1360px] 2xl:max-w-[1450px] h-auto object-contain select-none transform-gpu transition-all duration-300 ease-out filter drop-shadow-[0_16px_36px_rgba(0,0,0,0.65)] ${
-                  direction === 'right' ? 'animate-drive-in-right' : 'animate-drive-in-left'
-                }`}
-                loading="eager"
-              />
-            </picture>
+          <div className="relative w-full max-w-[1180px] aspect-[16/9] flex items-center justify-center overflow-hidden rounded-3xl bg-[#06080e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.95)]">
+            <img
+              key={currentModality.id}
+              src={currentModality.imageSrc}
+              alt={currentModality.alt}
+              referrerPolicy="no-referrer"
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (!target.dataset.fallback) {
+                  target.dataset.fallback = 'true';
+                  target.src = '/images/bahcar_pop.jpg';
+                }
+              }}
+              className={`w-full h-full object-cover object-center select-none transform-gpu transition-all duration-500 ease-out ${
+                direction === 'right' ? 'animate-drive-in-right' : 'animate-drive-in-left'
+              }`}
+              loading="eager"
+            />
+            {/* Iluminação suave na base */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050608] via-transparent to-transparent opacity-65 pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#050608] via-[#050608]/80 to-transparent pointer-events-none" />
           </div>
+        </div>
 
-          {/* Destaques Rápidos da Categoria (limpo, sem blocos de texto compridos) */}
-          <div className="w-full max-w-xl mx-auto flex flex-col items-center text-center mt-3 sm:mt-5">
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-              {currentModality.highlights.map((item, idx) => (
+        {/* CONTEÚDO EDITORIAL BREVE E PROFISSIONAL */}
+        <div
+          ref={detailsRef}
+          className={`w-full max-w-5xl mx-auto mt-6 sm:mt-10 pt-2 scroll-reveal scroll-reveal-delay-1 ${detailsVisible ? 'is-revealed' : ''}`}
+        >
+          
+          {/* Header da Categoria com Nome e Regra */}
+          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 pb-4 border-b border-white/10">
+            <div className="flex items-baseline gap-3 sm:gap-5 flex-wrap">
+              <h3
+                className="text-4xl sm:text-6xl md:text-7xl italic font-black uppercase tracking-tight text-white leading-none"
+                style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}
+              >
+                {currentModality.name}
+              </h3>
+              <span
+                className="text-base sm:text-xl md:text-2xl font-bold italic tracking-wide text-[#B8FF00]"
+                style={{ fontFamily: "'Kanit', sans-serif" }}
+              >
+                {currentModality.yearRule}
+              </span>
+            </div>
+
+            {/* Destaques rápidos lado a lado */}
+            <div className="flex flex-row items-center gap-2 sm:gap-2.5 flex-nowrap shrink-0 overflow-x-auto">
+              {currentModality.highlights.map((h, i) => (
                 <span
-                  key={idx}
-                  className="px-3.5 py-1.5 rounded-full bg-white/[0.05] border border-white/10 text-xs font-mono text-neutral-200"
+                  key={i}
+                  className="whitespace-nowrap shrink-0 px-3.5 py-1 rounded-full text-xs font-semibold glass-card-subtle text-neutral-200"
                 >
-                  {item}
+                  {h}
                 </span>
               ))}
             </div>
+          </div>
 
-            {/* Indicador Minimalista Inferior (Toque / Mobile) */}
-            <div className="mt-6 sm:mt-8 flex items-center gap-2.5">
-              {MODALITIES_LIST.map((_, dotIdx) => (
+          {/* Resumo Breve & Botão de Veículos Disponíveis */}
+          <div className="pt-4 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <p className="text-base sm:text-lg text-neutral-200 font-medium max-w-xl leading-relaxed">
+              {currentModality.summary}
+            </p>
+
+            {/* Botão: Veja os veículos disponíveis */}
+            {currentModality.models && (
+              <div className="flex flex-col items-start md:items-end">
                 <button
-                  key={dotIdx}
-                  onClick={() => {
-                    resetAutoTimer();
-                    selectModality(dotIdx);
-                  }}
-                  className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                    activeIndex === dotIdx
-                      ? 'w-8 bg-[#B8FF00] shadow-[0_0_10px_rgba(184,255,0,0.8)]'
-                      : 'w-2 bg-white/20 hover:bg-white/40'
-                  }`}
-                  aria-label={`Ir para slide ${dotIdx + 1}`}
-                />
-              ))}
-            </div>
+                  onClick={() => setShowModels((prev) => !prev)}
+                  className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold italic uppercase tracking-wider glass-card-subtle hover:border-[#B8FF00]/60 text-white hover:text-[#B8FF00] transition-all cursor-pointer shadow-md active:scale-95"
+                  style={{ fontFamily: "'Kanit', sans-serif" }}
+                >
+                  <span>{showModels ? 'Ocultar veículos' : 'Veja os veículos disponíveis'}</span>
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-300 ${
+                      showModels ? 'rotate-180 text-[#B8FF00]' : 'text-neutral-400'
+                    }`}
+                  />
+                </button>
+              </div>
+            )}
+          </div>
 
+          {/* Lista Revelada dos Veículos Homologados quando clicado */}
+          {showModels && currentModality.models && (
+            <div className="mt-5 p-5 sm:p-6 rounded-2xl glass-panel animate-fadeIn">
+              <span className="block text-xs uppercase font-mono tracking-widest text-[#B8FF00] mb-3">
+                Modelos Pré-Aprovados:
+              </span>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+                {currentModality.models.map((model, idx) => (
+                  <span
+                    key={idx}
+                    className="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold italic uppercase tracking-wider glass-card-subtle text-neutral-200"
+                    style={{ fontFamily: "'Kanit', sans-serif" }}
+                  >
+                    {model}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Navegação Inferior Sutil */}
+          <div className="w-full flex justify-center items-center mt-8 gap-2">
+            {MODALITIES_LIST.map((_, dotIdx) => (
+              <button
+                key={dotIdx}
+                onClick={() => {
+                  resetAutoTimer();
+                  selectModality(dotIdx);
+                }}
+                className={`h-1 transition-all duration-300 cursor-pointer ${
+                  activeIndex === dotIdx
+                    ? 'w-10 bg-[#B8FF00]'
+                    : 'w-4 bg-white/20 hover:bg-white/40'
+                }`}
+                aria-label={`Ir para categoria ${dotIdx + 1}`}
+              />
+            ))}
           </div>
 
         </div>

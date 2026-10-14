@@ -8,50 +8,57 @@ interface FinalCtaProps {
 }
 
 export const FinalCta: React.FC<FinalCtaProps> = ({ onOpenLaunch, onOpenPartner }) => {
-  const [contentRef, isVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.15 });
+  const [contentRef, isVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.04 });
 
   return (
     <section
       id="final-cta"
-      className="relative w-full py-28 sm:py-36 lg:py-48 bg-transparent text-white flex items-center justify-center overflow-hidden"
+      className="relative w-full py-24 sm:py-32 lg:py-40 bg-[#050608] text-white flex items-center justify-center overflow-hidden"
     >
-      {/* Main Campaign Closing Narrative */}
+      {/* Luz ambiente de fundo sutil sem blur filter */}
+      <div
+        className="absolute inset-0 bg-[radial-gradient(ellipse_600px_350px_at_50%_50%,rgba(184,255,0,0.03),transparent_70%)] pointer-events-none"
+        aria-hidden="true"
+      />
 
-      {/* Main Campaign Closing Narrative */}
       <div
         ref={contentRef}
-        className={`relative z-10 max-w-5xl mx-auto px-6 sm:px-8 text-center flex flex-col items-center scroll-reveal ${isVisible ? 'is-revealed' : ''}`}
+        className={`relative z-10 max-w-4xl mx-auto px-6 sm:px-8 text-center flex flex-col items-center scroll-reveal ${
+          isVisible ? 'is-revealed' : ''
+        }`}
       >
-        
+        {/* Título Principal */}
         <h2
-          className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl italic font-black uppercase tracking-[0.02em] leading-[1.05] text-balance text-white"
+          className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl italic font-black uppercase tracking-[0.02em] leading-[0.98] text-balance text-white"
           style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}
         >
           <span>SANTA MARIA VAI</span> <br />
-          <span className="outline-text-hollow inline-block">
+          <span className="text-[#B8FF00] drop-shadow-[0_0_35px_rgba(184,255,0,0.4)] inline-block mt-2">
             SE MOVER DIFERENTE.
           </span>
         </h2>
 
-        <p className="mt-6 sm:mt-8 text-lg sm:text-2xl text-neutral-300 font-light leading-relaxed max-w-2xl mx-auto">
-          Feito por quem conhece cada rua, cada esquina e o valor de quem dirige e anda aqui.
+        <p className="mt-5 sm:mt-6 text-base sm:text-lg text-neutral-300 font-normal leading-relaxed max-w-xl mx-auto">
+          Um ecossistema local feito para valorizar de verdade quem dirige e oferecer aos passageiros a resposta mais rápida e segura de Santa Maria.
         </p>
 
-        {/* Action Buttons: Impeccable Button Discipline */}
-        <div className="mt-10 sm:mt-14 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full sm:w-auto">
+        {/* Botões de Ação Clean: Motorista e Passageiro */}
+        <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto">
           <button
-            onClick={onOpenLaunch}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 sm:px-10 py-4 sm:py-5 text-xs sm:text-sm font-black font-heading uppercase tracking-[0.18em] text-black bg-[#B8FF00] hover:bg-[#c9ff2e] rounded-xl transition-all duration-200 shadow-[0_0_30px_rgba(184,255,0,0.25)] active:scale-95 group"
+            onClick={onOpenPartner}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 sm:px-9 py-4 text-sm sm:text-base font-black italic uppercase tracking-wider text-black bg-[#B8FF00] hover:bg-[#caff33] rounded-2xl transition-all duration-200 shadow-[0_0_25px_rgba(184,255,0,0.35)] hover:shadow-[0_0_35px_rgba(184,255,0,0.55)] hover:scale-105 active:scale-95 group cursor-pointer"
+            style={{ fontFamily: "'Kanit', sans-serif" }}
           >
-            <span>QUERO CONHECER A BAHCAR</span>
+            <span>QUERO SER MOTORISTA</span>
             <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
           </button>
 
           <button
-            onClick={onOpenPartner}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 sm:px-10 py-4 sm:py-5 text-xs sm:text-sm font-bold font-heading uppercase tracking-[0.18em] text-white hover:text-white bg-[#0e0e0e] hover:bg-[#161616] border border-white/20 hover:border-[#B8FF00]/50 rounded-xl transition-all duration-200 active:scale-95"
+            onClick={onOpenLaunch}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 sm:px-9 py-4 text-sm sm:text-base font-bold italic uppercase tracking-wider text-white hover:text-[#B8FF00] glass-card-subtle hover:border-[#B8FF00]/50 rounded-2xl transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+            style={{ fontFamily: "'Kanit', sans-serif" }}
           >
-            <span>QUERO SER MOTORISTA</span>
+            <span>QUERO SER PASSAGEIRO</span>
           </button>
         </div>
 

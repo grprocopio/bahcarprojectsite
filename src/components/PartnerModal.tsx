@@ -12,6 +12,7 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({ isOpen, onClose }) =
     phone: '',
     vehicle: '',
     year: '',
+    modality: 'pop',
     neighborhood: '',
   });
   const [submitted, setSubmitted] = useState(false);
@@ -36,15 +37,16 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({ isOpen, onClose }) =
       phone: '',
       vehicle: '',
       year: '',
+      modality: 'pop',
       neighborhood: '',
     });
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-fadeIn">
       <div 
-        className="relative w-full max-w-lg bg-[#090909] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl text-left"
+        className="relative w-full max-w-lg glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl text-left bg-[#0c0d12]/90"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -118,6 +120,23 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({ isOpen, onClose }) =
                 </div>
               </div>
 
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5 font-medium">
+                  Modalidade Pretendida
+                </label>
+                <select
+                  aria-label="Modalidade Pretendida"
+                  value={formData.modality || 'pop'}
+                  onChange={(e) => setFormData({ ...formData, modality: e.target.value })}
+                  className="w-full bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#B8FF00] transition-colors"
+                >
+                  <option value="pop">POP — Qualquer carro a partir de 2011</option>
+                  <option value="plus">PLUS — Hatch elétrico a partir de 2023</option>
+                  <option value="confort">CONFORT SEDAN — Sedans a partir de 2019</option>
+                  <option value="black">BLACK — Apenas modelos homologados</option>
+                </select>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5 font-medium">
@@ -125,7 +144,7 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({ isOpen, onClose }) =
                   </label>
                   <input
                     type="text"
-                    placeholder="Ex.: Onix, Argo, HB20"
+                    placeholder="Ex.: Onix Plus, Corolla, Versa..."
                     value={formData.vehicle}
                     onChange={(e) => setFormData({ ...formData, vehicle: e.target.value })}
                     className="w-full bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#B8FF00] transition-colors"

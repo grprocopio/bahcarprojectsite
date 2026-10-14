@@ -120,48 +120,47 @@ export const GlobalVideoBackground: React.FC<GlobalVideoBackgroundProps> = ({ hl
     const video = videoRef.current;
     if (!video) return;
 
+    // Ultra-optimized 60fps video seek without decoding lockups
     let targetTime = 0;
     let animFrameId: number | null = null;
-    let isTicking = false;
+    let isSeeking = false;
 
-    const tick = () => {
-      if (!video) {
-        isTicking = false;
+    const performSeek = () => {
+      if (!video || video.readyState < 1 || !video.duration || isSeeking) {
         return;
       }
 
-      if (video.readyState >= 1 && video.duration) {
-        const current = video.currentTime;
-        const diff = targetTime - current;
+      const current = video.currentTime;
+      const diff = targetTime - current;
 
-        if (Math.abs(diff) > 0.002) {
-          const lerp = Math.abs(diff) > 0.4 ? 0.55 : 0.36;
-          const nextTime = current + diff * lerp;
-          const clampedTime = Math.max(0, Math.min(video.duration - 0.01, nextTime));
-          video.currentTime = clampedTime;
-
-          animFrameId = requestAnimationFrame(tick);
-          return;
+      if (Math.abs(diff) > 0.03) {
+        isSeeking = true;
+        const clamped = Math.max(0, Math.min(video.duration - 0.02, targetTime));
+        const targetVideo = video as HTMLVideoElement;
+        if (typeof (targetVideo as any).fastSeek === 'function') {
+          try {
+            (targetVideo as any).fastSeek(clamped);
+          } catch {
+            targetVideo.currentTime = clamped;
+          }
         } else {
-          // Settled near target
-          video.currentTime = targetTime;
+          targetVideo.currentTime = clamped;
         }
       }
-
-      isTicking = false;
-      animFrameId = null;
     };
 
-    const requestTick = () => {
-      if (!isTicking) {
-        isTicking = true;
-        animFrameId = requestAnimationFrame(tick);
+    const handleSeeked = () => {
+      isSeeking = false;
+      if (video && Math.abs(targetTime - video.currentTime) > 0.04) {
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        animFrameId = requestAnimationFrame(performSeek);
       }
     };
 
-    // ScrollTrigger on window scroll:
-    // Scroll extendido para o cliente ver o carro em movimento com nitidez total
-    const scrollDistance = Math.max(1800, typeof window !== 'undefined' ? window.innerHeight * 2.2 : 1800);
+    video.addEventListener('seeked', handleSeeked);
+
+    // Scroll ágil e dinâmico: as outras seções do site aparecem com rapidez e fluidez
+    const scrollDistance = Math.min(750, typeof window !== 'undefined' ? Math.max(500, Math.round(window.innerHeight * 0.75)) : 700);
     const st = ScrollTrigger.create({
       trigger: document.body,
       start: 'top top',
@@ -170,7 +169,10 @@ export const GlobalVideoBackground: React.FC<GlobalVideoBackgroundProps> = ({ hl
       onUpdate: (self) => {
         const dur = (video && video.duration && !isNaN(video.duration)) ? video.duration : videoDuration;
         targetTime = self.progress * dur;
-        requestTick();
+        if (!isSeeking) {
+          if (animFrameId) cancelAnimationFrame(animFrameId);
+          animFrameId = requestAnimationFrame(performSeek);
+        }
       },
     });
 
@@ -178,6 +180,7 @@ export const GlobalVideoBackground: React.FC<GlobalVideoBackgroundProps> = ({ hl
       if (animFrameId !== null) {
         cancelAnimationFrame(animFrameId);
       }
+      video.removeEventListener('seeked', handleSeeked);
       st.kill();
     };
   }, [videoDuration]);
@@ -186,7 +189,7 @@ export const GlobalVideoBackground: React.FC<GlobalVideoBackgroundProps> = ({ hl
     <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden select-none bg-[#050505]">
       {/* 
         Fullscreen Video Layer:
-        Ocupa 100% da tela em posição fixa durante toda a navegação do site com boa nitidez e presença.
+        Ocupa 100% da tela em posição fixa durante toda a navegação com máxima performance GPU
       */}
       <video
         ref={videoRef}
@@ -207,28 +210,27 @@ export const GlobalVideoBackground: React.FC<GlobalVideoBackgroundProps> = ({ hl
 
       {/* 
         Dynamic Low-Exposure Tint Layer:
-        Levemente escurecido (apenas 12%) na Hero para destacar o carro com brilho e cor fiéis,
-        e escurece progressivamente com o blur apenas ao avançar para as demais seções.
+        GPU composited sem travamento
       */}
       <div
-        className="absolute inset-0 pointer-events-none transition-none transform-gpu"
+        className="absolute inset-0 pointer-events-none transform-gpu"
         style={{
           transform: 'translateZ(0)',
-          backgroundColor: 'rgba(5, 5, 5, calc(0.12 + var(--hero-blur-intensity, 0) * 0.55))',
+          backgroundColor: 'rgba(5, 5, 5, calc(0.12 + var(--hero-blur-intensity, 0) * 0.65))',
         }}
       />
 
       {/* 
-        Dynamic Blur Layer:
-        Aplica o efeito de blur suave no vídeo assim que o usuário passa o scroll da Hero,
-        tornando o fundo cinematográfico e suave para as demais seções.
+        Ultra-Smooth Blur Layer:
+        Composited com opacity para nunca travar a GPU durante o scroll
       */}
       <div
-        className="absolute inset-0 pointer-events-none transition-none transform-gpu"
+        className="absolute inset-0 pointer-events-none transform-gpu"
         style={{
           transform: 'translateZ(0)',
-          backdropFilter: 'blur(calc(var(--hero-blur-intensity, 0) * 12px))',
-          WebkitBackdropFilter: 'blur(calc(var(--hero-blur-intensity, 0) * 12px))',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          opacity: 'var(--hero-blur-intensity, 0)',
         }}
       />
     </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BahCarLogo } from './BahCarLogo';
+import { useScrollReveal } from '../hooks/useScrollPosition';
 
 interface FooterProps {
   onOpenPrivacy: () => void;
@@ -7,8 +8,13 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onOpenPrivacy, onOpenContact }) => {
+  const [footerRef, isVisible] = useScrollReveal<HTMLElement>({ threshold: 0.02 });
+
   return (
-    <footer className="relative w-full py-16 bg-transparent text-white">
+    <footer
+      ref={footerRef}
+      className={`relative w-full py-16 bg-transparent text-white scroll-reveal ${isVisible ? 'is-revealed' : ''}`}
+    >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-12">
           {/* Brand & City */}

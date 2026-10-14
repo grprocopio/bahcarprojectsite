@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Shield, Lock, FileText } from 'lucide-react';
+import { X, Shield, Lock } from 'lucide-react';
 
 interface PrivacyModalProps {
   isOpen: boolean;
@@ -45,23 +45,6 @@ export const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) =
               A BahCar trata os dados de passageiros e motoristas parceiros em estrita conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018), garantindo criptografia, finalidade legítima e armazenamento seguro.
             </p>
           </div>
-
-          <div className="p-4 bg-white/5 border border-[#B8FF00]/20 rounded-xl">
-            <h4 className="font-semibold text-white flex items-center gap-2 mb-1">
-              <FileText className="w-4 h-4 text-[#B8FF00]" />
-              Nota Técnica sobre a Modalidade GUARD
-            </h4>
-            <p className="text-neutral-400">
-              A modalidade BahCar GUARD destina-se a fornecer acompanhamento adicional durante as corridas. Ressaltamos que quaisquer recursos de videomonitoramento, telemetria em tempo real ou compartilhamento assistido dependem de rigorosa validação técnica prévia, homologação de equipamentos compatíveis e observância irrestrita aos direitos de privacidade de todos os ocupantes do veículo.
-            </p>
-          </div>
-
-          <div>
-            <h5 className="font-semibold text-white mb-1">Compartilhamento com terceiros</h5>
-            <p className="text-neutral-400">
-              Seus dados de contato e localização nunca são comercializados. São utilizados estritamente para o cálculo de rotas, atendimento operacional e segurança das viagens em Santa Maria.
-            </p>
-          </div>
         </div>
 
         <div className="mt-6 pt-4 border-t border-white/10 text-right">
@@ -76,3 +59,5 @@ export const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) =
     </div>
   );
 };
+
+export default PrivacyModal;
