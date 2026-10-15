@@ -1,15 +1,43 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export const ManifestoSection: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="relative w-full py-16 sm:py-24 lg:py-32 px-5 sm:px-10 lg:px-16 xl:px-20 bg-[#050608] text-white flex items-center justify-center select-none touch-pan-y">
-      {/* Luz ambiente suave de transição (radial-gradient puro sem blur filter para eliminar qualquer artefato de listra GPU na borda) */}
+    <section
+      id="manifesto"
+      ref={sectionRef}
+      className="relative w-full py-16 sm:py-24 lg:py-32 px-5 sm:px-10 lg:px-16 xl:px-20 bg-[#050608] text-white flex items-center justify-center select-none touch-pan-y scroll-mt-12"
+    >
+      {/* Luz ambiente suave de transição */}
       <div
         className="absolute inset-0 bg-[radial-gradient(ellipse_650px_380px_at_50%_50%,rgba(184,255,0,0.04),transparent_70%)] pointer-events-none"
         aria-hidden="true"
       />
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto text-left">
+      <div
+        className={`relative z-10 w-full max-w-6xl mx-auto text-left transition-all duration-700 ease-out transform ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}
+      >
         <h2
           className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl italic font-black uppercase tracking-tight leading-[1.08] sm:leading-[1.04] text-white"
           style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}

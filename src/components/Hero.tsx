@@ -54,48 +54,57 @@ export const Hero: React.FC<HeroProps> = () => {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative w-full min-h-[100svh] lg:min-h-screen flex flex-col justify-start lg:justify-center bg-[#050608] z-10 touch-pan-y"
+      className="relative w-full min-h-[100svh] min-h-[100dvh] lg:min-h-screen flex flex-col justify-start lg:justify-center bg-[#050608] z-10 touch-pan-y overflow-hidden"
       style={{ touchAction: 'pan-y' }}
     >
-      {/* IMAGEM CARROMATE DE FUNDO:
-          - No desktop (lg): exatamente como estava no computador (object-cover tela cheia).
-          - No celular e tablet: imagem 100% visível sem cortes (object-contain na base integrada ao fundo preto), 
-            exibindo a cuia com mate, celular com rota e o carro neon completo. */}
+      {/* BACKGROUND DA HERO:
+          - No mobile (telas < 1024px): hero-mobile.jpg preenche 100% da tela em tela cheia (object-cover),
+            com a cena ajustada para exibir a imagem inteira (cuia, celular e carro) e o topo/base esticados
+            seguindo o padrão da imagem (fumaça/atmosfera no topo, asfalto molhado com reflexos verdes embaixo).
+          - No desktop (lg): carromate.jpg original em 16:9 tela cheia (lg:object-cover). */}
       <div className="absolute inset-0 w-full h-full bg-[#050608] overflow-hidden pointer-events-none">
-        <img
-          ref={imageRef}
-          src="/carromate.jpg"
-          alt="BahCar Mobilidade"
-          className="w-full h-full object-contain object-bottom sm:object-contain sm:object-bottom lg:object-cover lg:object-center select-none"
+        <picture className="absolute inset-0 w-full h-full block">
+          {/* Mobile: imagem ajustada em tela cheia contendo todos os elementos e esticada verticalmente no padrão */}
+          <source
+            media="(max-width: 1023px)"
+            srcSet="/hero-mobile.jpg?v=4"
+          />
+          {/* Desktop */}
+          <img
+            ref={imageRef}
+            src="/carromate.jpg"
+            alt="BahCar Mobilidade"
+            className="w-full h-full object-cover object-center select-none"
+            style={{
+              imageRendering: '-webkit-optimize-contrast',
+            }}
+            loading="eager"
+            referrerPolicy="no-referrer"
+          />
+        </picture>
+
+        {/* Degradê escuro suave: ~55% no topo, transparente no meio (preserva o carro e os faróis), ~70% na base */}
+        <div
+          className="absolute inset-0 pointer-events-none z-10"
           style={{
-            imageRendering: '-webkit-optimize-contrast',
+            background:
+              'linear-gradient(to bottom, rgba(5, 6, 8, 0.55) 0%, rgba(5, 6, 8, 0.20) 20%, rgba(5, 6, 8, 0) 42%, rgba(5, 6, 8, 0) 65%, rgba(5, 6, 8, 0.40) 85%, rgba(5, 6, 8, 0.70) 100%)',
           }}
-          loading="eager"
-        />
-
-        {/* Degradê superior suave para legibilidade da navbar */}
-        <div
-          className="absolute top-0 inset-x-0 h-32 sm:h-40 bg-gradient-to-b from-[#050608] via-[#050608]/50 to-transparent pointer-events-none z-10"
-          aria-hidden="true"
-        />
-
-        {/* Degradê inferior suave para transição com a próxima seção */}
-        <div
-          className="absolute bottom-0 inset-x-0 h-16 sm:h-24 lg:h-48 bg-gradient-to-t from-[#050608] via-[#050608]/50 to-transparent pointer-events-none z-10"
           aria-hidden="true"
         />
       </div>
 
-      {/* TIPOGRAFIA OFICIAL DA HERO:
-          Exatamente a mesma estrutura do desktop, sobreposta organicamente à composição */}
+      {/* 5 & 7. TIPOGRAFIA OFICIAL DA HERO:
+          Título sobre a imagem, alinhado à esquerda, com respiro do topo para a navbar centralizada
+          e dimensões svh/dvh para nada ficar cortado pelas barras dos navegadores mobile. */}
       <div
         ref={textRef}
-        className="relative z-20 w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-10 xl:px-12 pt-[9.5rem] sm:pt-28 md:pt-32 lg:pt-0 lg:-mt-12 xl:-mt-16 pointer-events-none"
+        className="relative z-20 w-full max-w-7xl mx-auto px-5 sm:px-10 lg:px-10 xl:px-12 pt-28 sm:pt-32 md:pt-36 lg:pt-0 lg:-mt-12 xl:-mt-16 pointer-events-none"
       >
         <div className="max-w-4xl text-left pointer-events-auto lg:-translate-x-6 xl:-translate-x-10">
-          {/* Headline Principal com Destaque e Fonte Contornada */}
+          {/* Headline Principal: PESSOAS MOVEM A CIDADE. A BAH CONECTA. */}
           <h1
-            className="text-[clamp(2.85rem,9.6vw,3.75rem)] sm:text-6xl md:text-7xl lg:text-8xl italic font-black uppercase tracking-tight leading-[0.93] sm:leading-[0.95] drop-shadow-[0_10px_35px_rgba(0,0,0,0.95)]"
+            className="text-[clamp(2.6rem,8.8vw,3.75rem)] sm:text-6xl md:text-7xl lg:text-8xl italic font-black uppercase tracking-tight leading-[0.93] sm:leading-[0.95] drop-shadow-[0_10px_35px_rgba(0,0,0,0.95)]"
             style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}
           >
             <span className="text-white block pb-1">
@@ -118,6 +127,7 @@ export const Hero: React.FC<HeroProps> = () => {
           </h1>
         </div>
       </div>
+
 
       {/* Linha invisível de transição com a próxima seção */}
       <div
