@@ -1,4 +1,5 @@
 import React from 'react';
+import { Mail } from 'lucide-react';
 import { BahCarLogo } from './BahCarLogo';
 import { useScrollReveal } from '../hooks/useScrollPosition';
 
@@ -23,6 +24,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPrivacy, onOpenContact }) 
             <div className="text-xs uppercase tracking-widest text-neutral-400 mt-2 font-mono">
               Santa Maria — RS
             </div>
+            <a
+              href="mailto:contato@bahcar.com.br"
+              className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-[#B8FF00] transition-colors mt-2"
+            >
+              <Mail className="w-3.5 h-3.5 text-[#B8FF00]" />
+              <span>contato@bahcar.com.br</span>
+            </a>
           </div>
 
           {/* Minimalist Nav Links with Brand-colored Social / Contact Logos */}
@@ -79,13 +87,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPrivacy, onOpenContact }) 
           </div>
         </div>
 
-        {/* Closing Tagline */}
-        <div className="pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-neutral-500 font-light">
-          <p className="font-heading tracking-wide text-neutral-400">
-            Mobilidade urbana gaúcha.
-          </p>
-          <p>
-            © {new Date().getFullYear()} BahCar Tecnologia Ltda. Todos os direitos reservados.
+        {/* Rodapé Final */}
+        <div className="pt-8 border-t border-white/5 flex items-center justify-center sm:justify-between gap-4 text-xs text-neutral-500 font-light">
+          <p className="text-[11px]">
+            © {new Date().getFullYear()} BAHCAR MOBILIDADE URBANA LTDA. Todos os direitos reservados.
           </p>
         </div>
       </div>

@@ -42,7 +42,7 @@ export const PrivacyModal: React.FC<PrivacyModalProps> = ({ isOpen, onClose }) =
               Proteção de Dados Pessoais (LGPD)
             </h4>
             <p className="text-neutral-400">
-              A BahCar trata os dados de passageiros e motoristas parceiros em estrita conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018), garantindo criptografia, finalidade legítima e armazenamento seguro.
+              A <strong>BAHCAR MOBILIDADE URBANA LTDA</strong> trata os dados de passageiros e motoristas parceiros em estrita conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018), garantindo criptografia, finalidade legítima e armazenamento seguro em Santa Maria/RS.
             </p>
           </div>
         </div>

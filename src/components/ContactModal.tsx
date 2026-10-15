@@ -102,14 +102,17 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
             </div>
           </a>
 
-          {/* Localização */}
+          {/* Localização e Empresa */}
           <div className="flex items-center gap-3 p-3.5 bg-white/5 border border-white/10 rounded-xl">
-            <div className="w-9 h-9 rounded-lg bg-[#B8FF00]/10 flex items-center justify-center text-[#B8FF00]">
+            <div className="w-9 h-9 rounded-lg bg-[#B8FF00]/10 flex items-center justify-center text-[#B8FF00] shrink-0">
               <MapPin className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-xs text-neutral-400">Origem & Operação</div>
-              <div className="text-sm font-medium text-white">
+              <div className="text-xs text-neutral-400">Origem & Registro</div>
+              <div className="text-sm font-medium text-white tracking-wide uppercase">
+                BAHCAR MOBILIDADE URBANA LTDA
+              </div>
+              <div className="text-[11px] text-neutral-400 mt-0.5">
                 Santa Maria — Rio Grande do Sul
               </div>
             </div>
