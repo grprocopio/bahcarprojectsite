@@ -184,8 +184,8 @@ export const Modalities: React.FC = () => {
           </div>
 
           {/* NAVEGAÇÃO ENTRE AS 4 MODALIDADES */}
-          <div className="w-full flex items-center justify-center pb-8 sm:pb-12">
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 rounded-2xl glass-card-subtle">
+          <div className="w-full flex items-center justify-center pb-6 sm:pb-10">
+            <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl bg-[#0d0f17]/85 backdrop-blur-md border border-white/10 max-w-full">
               {MODALITIES_LIST.map((item, idx) => {
                 const isActive = activeIndex === idx;
                 return (
@@ -195,7 +195,7 @@ export const Modalities: React.FC = () => {
                       resetAutoTimer();
                       selectModality(idx);
                     }}
-                    className={`relative px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl font-black italic tracking-wide uppercase transition-all duration-300 cursor-pointer text-base sm:text-xl md:text-2xl leading-none ${
+                    className={`relative px-3 sm:px-5 md:px-7 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl font-black italic tracking-wide uppercase transition-all duration-300 cursor-pointer text-xs sm:text-base md:text-xl leading-none ${
                       isActive
                         ? 'bg-[#B8FF00] text-black shadow-[0_0_25px_rgba(184,255,0,0.5)] scale-105'
                         : 'text-neutral-400 hover:text-white hover:bg-white/[0.05]'
@@ -211,17 +211,17 @@ export const Modalities: React.FC = () => {
           </div>
         </div>
 
-        {/* SHOWROOM DO VEÍCULO COM FOTOS REALISTAS NACIONAIS */}
+        {/* SHOWROOM DO VEÍCULO COM FOTOS REALISTAS NACIONAIS (Sem cortar o carro no mobile/tablet) */}
         <div
           ref={showroomRef}
-          className={`relative w-full flex items-center justify-center py-2 sm:py-4 scroll-reveal scroll-reveal-delay-1 ${showroomVisible ? 'is-revealed' : ''}`}
+          className={`relative w-full flex items-center justify-center py-1 sm:py-4 scroll-reveal scroll-reveal-delay-1 ${showroomVisible ? 'is-revealed' : ''}`}
         >
           <button
             onClick={() => {
               resetAutoTimer();
               prevModality();
             }}
-            className="hidden lg:flex absolute left-0 xl:-left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 items-center justify-center rounded-full glass-card-subtle hover:border-[#B8FF00] text-white hover:text-[#B8FF00] transition-all cursor-pointer shadow-2xl backdrop-blur-md"
+            className="hidden lg:flex absolute left-0 xl:-left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 items-center justify-center rounded-full bg-[#0d0f17]/85 border border-white/15 hover:border-[#B8FF00] text-white hover:text-[#B8FF00] transition-all cursor-pointer shadow-2xl backdrop-blur-md"
             aria-label="Modalidade anterior"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -232,13 +232,13 @@ export const Modalities: React.FC = () => {
               resetAutoTimer();
               nextModality();
             }}
-            className="hidden lg:flex absolute right-0 xl:-right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 items-center justify-center rounded-full glass-card-subtle hover:border-[#B8FF00] text-white hover:text-[#B8FF00] transition-all cursor-pointer shadow-2xl backdrop-blur-md"
+            className="hidden lg:flex absolute right-0 xl:-right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 items-center justify-center rounded-full bg-[#0d0f17]/85 border border-white/15 hover:border-[#B8FF00] text-white hover:text-[#B8FF00] transition-all cursor-pointer shadow-2xl backdrop-blur-md"
             aria-label="Próxima modalidade"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
 
-          <div className="relative w-full max-w-[1180px] aspect-[16/9] flex items-center justify-center overflow-hidden rounded-3xl bg-[#06080e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.95)]">
+          <div className="relative w-full max-w-[1180px] aspect-[16/9] flex items-center justify-center overflow-hidden rounded-2xl sm:rounded-3xl bg-[#06080e] border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.95)]">
             <img
               key={currentModality.id}
               src={currentModality.imageSrc}
@@ -256,29 +256,28 @@ export const Modalities: React.FC = () => {
               }`}
               loading="eager"
             />
-            {/* Iluminação suave na base */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050608] via-transparent to-transparent opacity-65 pointer-events-none" />
-            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#050608] via-[#050608]/80 to-transparent pointer-events-none" />
+            {/* Suave degradê inferior apenas na base extrema (sem cobrir rodas/chassi no mobile) */}
+            <div className="absolute inset-x-0 bottom-0 h-10 sm:h-16 lg:h-24 bg-gradient-to-t from-[#050608] via-[#050608]/40 to-transparent pointer-events-none" />
           </div>
         </div>
 
         {/* CONTEÚDO EDITORIAL BREVE E PROFISSIONAL */}
         <div
           ref={detailsRef}
-          className={`w-full max-w-5xl mx-auto mt-6 sm:mt-10 pt-2 scroll-reveal scroll-reveal-delay-1 ${detailsVisible ? 'is-revealed' : ''}`}
+          className={`w-full max-w-5xl mx-auto mt-5 sm:mt-8 pt-2 scroll-reveal scroll-reveal-delay-1 ${detailsVisible ? 'is-revealed' : ''}`}
         >
           
           {/* Header da Categoria com Nome e Regra */}
-          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 pb-4 border-b border-white/10">
-            <div className="flex items-baseline gap-3 sm:gap-5 flex-wrap">
+          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 sm:gap-4 pb-4 border-b border-white/10">
+            <div className="flex items-baseline gap-2.5 sm:gap-5 flex-wrap">
               <h3
-                className="text-4xl sm:text-6xl md:text-7xl italic font-black uppercase tracking-tight text-white leading-none"
+                className="text-3xl sm:text-5xl md:text-7xl italic font-black uppercase tracking-tight text-white leading-none"
                 style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}
               >
                 {currentModality.name}
               </h3>
               <span
-                className="text-base sm:text-xl md:text-2xl font-bold italic tracking-wide text-[#B8FF00]"
+                className="text-sm sm:text-lg md:text-2xl font-bold italic tracking-wide text-[#B8FF00]"
                 style={{ fontFamily: "'Kanit', sans-serif" }}
               >
                 {currentModality.yearRule}
@@ -286,11 +285,11 @@ export const Modalities: React.FC = () => {
             </div>
 
             {/* Destaques rápidos lado a lado */}
-            <div className="flex flex-row items-center gap-2 sm:gap-2.5 flex-nowrap shrink-0 overflow-x-auto">
+            <div className="flex flex-row items-center gap-1.5 sm:gap-2.5 flex-wrap shrink-0">
               {currentModality.highlights.map((h, i) => (
                 <span
                   key={i}
-                  className="whitespace-nowrap shrink-0 px-3.5 py-1 rounded-full text-xs font-semibold glass-card-subtle text-neutral-200"
+                  className="whitespace-nowrap shrink-0 px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-[#111420]/80 border border-white/10 text-neutral-200"
                 >
                   {h}
                 </span>
@@ -299,8 +298,8 @@ export const Modalities: React.FC = () => {
           </div>
 
           {/* Resumo Breve & Botão de Veículos Disponíveis */}
-          <div className="pt-4 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <p className="text-base sm:text-lg text-neutral-200 font-medium max-w-xl leading-relaxed">
+          <div className="pt-3 sm:pt-4 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
+            <p className="text-sm sm:text-base md:text-lg text-neutral-200 font-medium max-w-xl leading-relaxed">
               {currentModality.summary}
             </p>
 
@@ -309,7 +308,7 @@ export const Modalities: React.FC = () => {
               <div className="flex flex-col items-start md:items-end">
                 <button
                   onClick={() => setShowModels((prev) => !prev)}
-                  className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold italic uppercase tracking-wider glass-card-subtle hover:border-[#B8FF00]/60 text-white hover:text-[#B8FF00] transition-all cursor-pointer shadow-md active:scale-95"
+                  className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold italic uppercase tracking-wider bg-[#0d0f17]/85 border border-white/15 hover:border-[#B8FF00]/60 text-white hover:text-[#B8FF00] transition-all cursor-pointer shadow-md active:scale-95"
                   style={{ fontFamily: "'Kanit', sans-serif" }}
                 >
                   <span>{showModels ? 'Ocultar veículos' : 'Veja os veículos disponíveis'}</span>
@@ -325,15 +324,15 @@ export const Modalities: React.FC = () => {
 
           {/* Lista Revelada dos Veículos Homologados quando clicado */}
           {showModels && currentModality.models && (
-            <div className="mt-5 p-5 sm:p-6 rounded-2xl glass-panel animate-fadeIn">
-              <span className="block text-xs uppercase font-mono tracking-widest text-[#B8FF00] mb-3">
+            <div className="mt-4 sm:mt-5 p-4 sm:p-6 rounded-2xl bg-[#0c0e14]/90 backdrop-blur-xl border border-white/10 shadow-xl animate-fadeIn">
+              <span className="block text-xs uppercase font-mono tracking-widest text-[#B8FF00] mb-2.5 sm:mb-3">
                 Modelos Pré-Aprovados:
               </span>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5">
                 {currentModality.models.map((model, idx) => (
                   <span
                     key={idx}
-                    className="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold italic uppercase tracking-wider glass-card-subtle text-neutral-200"
+                    className="px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-lg text-xs sm:text-sm font-bold italic uppercase tracking-wider bg-[#111420]/80 border border-white/10 text-neutral-200"
                     style={{ fontFamily: "'Kanit', sans-serif" }}
                   >
                     {model}

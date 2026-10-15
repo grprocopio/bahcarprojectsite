@@ -84,52 +84,54 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col gap-10 lg:gap-14">
+      <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col gap-8 sm:gap-10 lg:gap-14">
         
-        {/* CABEÇALHO DIRETO E LIMPO (sem a tag 'TRANSPARÊNCIA COM QUEM DIRIGE') */}
+        {/* CABEÇALHO DIRETO E LIMPO */}
         <div
           ref={headerRef}
           className={`max-w-3xl flex flex-col scroll-reveal ${headerVisible ? 'is-revealed' : ''}`}
         >
           <h2
-            className="text-[clamp(2.2rem,5vw,4.5rem)] italic font-black uppercase tracking-tight leading-[0.98] text-white"
+            className="text-[clamp(1.9rem,5.5vw,4.5rem)] italic font-black uppercase tracking-tight leading-[0.98] text-white"
             style={{ fontFamily: "'Kanit', 'Saira', sans-serif", fontWeight: 900 }}
           >
             <span>TAXA FIXA DE 16%. </span>
-            <span className="text-[#B8FF00] drop-shadow-[0_0_30px_rgba(184,255,0,0.35)]">
+            <span className="text-[#B8FF00] drop-shadow-[0_0_30px_rgba(184,255,0,0.35)] block sm:inline">
               O RESTO É SEU.
             </span>
           </h2>
-          <p className="mt-4 text-base sm:text-lg text-neutral-300 leading-relaxed font-normal">
+          <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg text-neutral-300 leading-relaxed font-normal">
             Sem descontos surpresa ou tarifas confusas de até 40%. Você sabe exatamente quanto ganha em cada corrida.
           </p>
         </div>
 
-        {/* CONTAINER DO SIMULADOR EM DESIGN GLASSMORPHISM */}
+        {/* CONTAINER DO SIMULADOR EM DESIGN GLASSMORPHISM (100% protegido contra tela branca) */}
         <div
           ref={cockpitRef}
-          className={`relative w-full rounded-3xl glass-panel p-6 sm:p-10 lg:p-12 overflow-hidden scroll-reveal scroll-reveal-delay-1 ${
-            cockpitVisible ? 'is-revealed' : ''
-          }`}
+          className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0c0e14] border border-white/12 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.85)] p-5 sm:p-8 lg:p-12 overflow-hidden"
+          style={{
+            backgroundColor: '#0c0e14',
+            backgroundImage: 'radial-gradient(ellipse 800px 400px at 50% 0%, rgba(255, 255, 255, 0.04), transparent 70%)',
+          }}
         >
-          {/* Brilho interno do vidro */}
+          {/* Brilho interno do vidro através de degradês radiais puros (sem filter: blur para garantir 0 bugs de GPU) */}
           <div 
-            className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#B8FF00]/[0.06] blur-2xl pointer-events-none" 
+            className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[radial-gradient(circle,rgba(184,255,0,0.08)_0%,transparent_70%)] pointer-events-none" 
             aria-hidden="true" 
           />
           <div 
-            className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-white/[0.02] blur-2xl pointer-events-none" 
+            className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.04)_0%,transparent_70%)] pointer-events-none" 
             aria-hidden="true" 
           />
 
           {/* Barra Superior do Ajuste de Valor */}
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-8 border-b border-white/10">
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 sm:pb-8 border-b border-white/10">
             <div>
-              <span className="font-mono text-[11px] uppercase tracking-widest text-neutral-400 block mb-1">
+              <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-neutral-400 block mb-1">
                 Simulador de Rendimento
               </span>
               <h3
-                className="text-2xl sm:text-3xl font-black italic uppercase text-white"
+                className="text-xl sm:text-2xl md:text-3xl font-black italic uppercase text-white"
                 style={{ fontFamily: "'Kanit', sans-serif" }}
               >
                 Ajuste o Valor da Corrida
@@ -137,12 +139,12 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
             </div>
 
             {/* Display do Valor no Vidro Fosco */}
-            <div className="self-start sm:self-auto flex items-center gap-3 px-6 py-3 rounded-2xl glass-card-subtle border-white/15">
-              <span className="font-mono text-xs text-neutral-400 uppercase tracking-wider">
+            <div className="self-start sm:self-auto flex items-center gap-2.5 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-2xl bg-[#10131c]/85 backdrop-blur-md border border-white/15">
+              <span className="font-mono text-[11px] sm:text-xs text-neutral-400 uppercase tracking-wider">
                 Valor:
               </span>
               <span
-                className="text-3xl sm:text-4xl font-black font-mono text-[#B8FF00] drop-shadow-[0_0_12px_rgba(184,255,0,0.35)] tabular-nums"
+                className="text-2xl sm:text-3xl md:text-4xl font-black font-mono text-[#B8FF00] drop-shadow-[0_0_12px_rgba(184,255,0,0.35)] tabular-nums"
                 style={{ fontFamily: "'Kanit', monospace" }}
               >
                 R$ {rideValue},00
@@ -151,7 +153,7 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
           </div>
 
           {/* Slider Interativo */}
-          <div className="relative z-10 py-6 sm:py-8 flex flex-col gap-3">
+          <div className="relative z-10 py-5 sm:py-7 flex flex-col gap-3">
             <div
               ref={trackRef}
               onPointerDown={handlePointerDown}
@@ -190,33 +192,36 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
             </div>
           </div>
 
-          {/* CARDS COMPARATIVOS EM GLASSMORPHISM */}
-          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 pt-2">
+          {/* CARDS COMPARATIVOS EM GLASSMORPHISM ESCURO */}
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-2">
             
             {/* Card BahCar Glassmorphism Destaque */}
-            <div className="p-6 sm:p-8 rounded-2xl glass-card-accent flex flex-col justify-between">
+            <div 
+              className="p-5 sm:p-7 lg:p-8 rounded-2xl bg-gradient-to-br from-[#121c12] via-[#0b130e] to-[#080d0a] border border-[#B8FF00]/40 shadow-[0_16px_40px_-10px_rgba(184,255,0,0.18)] flex flex-col justify-between"
+              style={{ backgroundColor: '#0b130e' }}
+            >
               <div>
-                <div className="flex items-center justify-between pb-4 border-b border-[#B8FF00]/20 mb-4">
+                <div className="flex items-center justify-between pb-3.5 sm:pb-4 border-b border-[#B8FF00]/20 mb-3 sm:mb-4">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#B8FF00] shadow-[0_0_8px_rgba(184,255,0,0.9)]" />
                     <span
-                      className="text-lg font-black italic uppercase text-white tracking-wide"
+                      className="text-base sm:text-lg font-black italic uppercase text-white tracking-wide"
                       style={{ fontFamily: "'Kanit', sans-serif" }}
                     >
                       BahCar
                     </span>
                   </div>
-                  <span className="text-xs font-mono font-bold text-[#B8FF00] uppercase tracking-wider">
+                  <span className="text-[11px] sm:text-xs font-mono font-bold text-[#B8FF00] uppercase tracking-wider">
                     Taxa 16% Fixa
                   </span>
                 </div>
 
-                <div className="py-2">
-                  <span className="text-xs uppercase font-mono tracking-wider text-neutral-400 block mb-1">
+                <div className="py-1 sm:py-2">
+                  <span className="text-[11px] sm:text-xs uppercase font-mono tracking-wider text-neutral-400 block mb-1">
                     Você recebe líquido por viagem:
                   </span>
                   <div
-                    className="text-4xl sm:text-5xl lg:text-6xl font-black italic text-[#B8FF00] drop-shadow-[0_0_20px_rgba(184,255,0,0.35)] tabular-nums"
+                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black italic text-[#B8FF00] drop-shadow-[0_0_20px_rgba(184,255,0,0.35)] tabular-nums"
                     style={{ fontFamily: "'Kanit', monospace" }}
                   >
                     R$ {formatBRL(bahcarNet)}
@@ -224,36 +229,39 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between font-mono text-xs text-neutral-300">
+              <div className="mt-5 sm:mt-6 pt-3.5 sm:pt-4 border-t border-white/10 flex items-center justify-between font-mono text-[11px] sm:text-xs text-neutral-300">
                 <span>Taxa da plataforma (16%):</span>
                 <span className="text-white font-bold tabular-nums">R$ {formatBRL(bahcarCommission)}</span>
               </div>
             </div>
 
-            {/* Card Mercado Tradicional em Vidro Sutil */}
-            <div className="p-6 sm:p-8 rounded-2xl glass-card-subtle flex flex-col justify-between opacity-85 hover:opacity-100 transition-opacity">
+            {/* Card Mercado Tradicional em Vidro Sutil Escuro */}
+            <div 
+              className="p-5 sm:p-7 lg:p-8 rounded-2xl bg-[#0f121a] border border-white/10 shadow-[0_16px_40px_-10px_rgba(0,0,0,0.5)] flex flex-col justify-between opacity-90 hover:opacity-100 transition-opacity"
+              style={{ backgroundColor: '#0f121a' }}
+            >
               <div>
-                <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+                <div className="flex items-center justify-between pb-3.5 sm:pb-4 border-b border-white/10 mb-3 sm:mb-4">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-neutral-600" />
                     <span
-                      className="text-lg font-bold italic uppercase text-neutral-300 tracking-wide"
+                      className="text-base sm:text-lg font-bold italic uppercase text-neutral-300 tracking-wide"
                       style={{ fontFamily: "'Kanit', sans-serif" }}
                     >
                       Outros Apps
                     </span>
                   </div>
-                  <span className="text-xs font-mono font-medium text-neutral-400 uppercase tracking-wider">
+                  <span className="text-[11px] sm:text-xs font-mono font-medium text-neutral-400 uppercase tracking-wider">
                     Até 35% retenção
                   </span>
                 </div>
 
-                <div className="py-2">
-                  <span className="text-xs uppercase font-mono tracking-wider text-neutral-500 block mb-1">
+                <div className="py-1 sm:py-2">
+                  <span className="text-[11px] sm:text-xs uppercase font-mono tracking-wider text-neutral-500 block mb-1">
                     Você receberia apenas:
                   </span>
                   <div
-                    className="text-4xl sm:text-5xl font-black italic text-neutral-400 tabular-nums"
+                    className="text-3xl sm:text-4xl md:text-5xl font-black italic text-neutral-400 tabular-nums"
                     style={{ fontFamily: "'Kanit', monospace" }}
                   >
                     R$ {formatBRL(competitorNet)}
@@ -261,7 +269,7 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between font-mono text-xs text-neutral-400">
+              <div className="mt-5 sm:mt-6 pt-3.5 sm:pt-4 border-t border-white/10 flex items-center justify-between font-mono text-[11px] sm:text-xs text-neutral-400">
                 <span>Desconto de terceiros (~35%):</span>
                 <span className="text-neutral-300 font-semibold tabular-nums">R$ {formatBRL(competitorCommission)}</span>
               </div>

@@ -18,7 +18,7 @@ export default function App() {
   const [contactModalOpen, setContactModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#050608] text-white selection:bg-[#B8FF00] selection:text-black relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#050608] text-white selection:bg-[#B8FF00] selection:text-black relative">
       {/* Navbar Oficial */}
       <Navbar onOpenPartner={() => setPartnerModalOpen(true)} />
 

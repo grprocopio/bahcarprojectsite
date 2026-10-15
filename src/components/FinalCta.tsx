@@ -55,7 +55,7 @@ export const FinalCta: React.FC<FinalCtaProps> = ({ onOpenLaunch, onOpenPartner 
 
           <button
             onClick={onOpenLaunch}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 sm:px-9 py-4 text-sm sm:text-base font-bold italic uppercase tracking-wider text-white hover:text-[#B8FF00] glass-card-subtle hover:border-[#B8FF00]/50 rounded-2xl transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 sm:px-9 py-4 text-sm sm:text-base font-bold italic uppercase tracking-wider text-white hover:text-[#B8FF00] bg-[#0d0f17]/85 backdrop-blur-md border border-white/15 hover:border-[#B8FF00]/50 rounded-2xl transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
             style={{ fontFamily: "'Kanit', sans-serif" }}
           >
             <span>QUERO SER PASSAGEIRO</span>
