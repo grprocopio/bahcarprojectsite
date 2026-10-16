@@ -83,13 +83,18 @@ export const Hero: React.FC<HeroProps> = () => {
           />
         </picture>
 
-        {/* Degradê escuro suave: ~55% no topo, transparente no meio (preserva o carro e os faróis), ~70% na base */}
+        {/* Degradê escuro suave que dissolve 100% no fundo uniforme (#050608) */}
         <div
           className="absolute inset-0 pointer-events-none z-10"
           style={{
             background:
-              'linear-gradient(to bottom, rgba(5, 6, 8, 0.55) 0%, rgba(5, 6, 8, 0.20) 20%, rgba(5, 6, 8, 0) 42%, rgba(5, 6, 8, 0) 65%, rgba(5, 6, 8, 0.40) 85%, rgba(5, 6, 8, 0.70) 100%)',
+              'linear-gradient(to bottom, rgba(5, 6, 8, 0.55) 0%, rgba(5, 6, 8, 0.15) 25%, rgba(5, 6, 8, 0) 45%, rgba(5, 6, 8, 0.25) 65%, rgba(5, 6, 8, 0.75) 85%, #050608 100%)',
           }}
+          aria-hidden="true"
+        />
+        {/* Camada suave de fusão perfeita com a seção seguinte */}
+        <div
+          className="absolute bottom-0 inset-x-0 h-44 sm:h-60 bg-gradient-to-t from-[#050608] via-[#050608]/90 to-transparent pointer-events-none z-10"
           aria-hidden="true"
         />
       </div>
@@ -129,11 +134,6 @@ export const Hero: React.FC<HeroProps> = () => {
       </div>
 
 
-      {/* Linha invisível de transição com a próxima seção */}
-      <div
-        className="absolute -bottom-1 inset-x-0 h-2 bg-[#050608] pointer-events-none z-20"
-        aria-hidden="true"
-      />
     </section>
   );
 };

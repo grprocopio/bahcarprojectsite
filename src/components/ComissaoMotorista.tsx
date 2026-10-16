@@ -76,14 +76,8 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
   return (
     <section
       id="comissao-clara"
-      className="relative w-full -mt-1 py-20 sm:py-28 lg:py-36 px-5 sm:px-8 lg:px-16 xl:px-20 bg-[#050608] text-white overflow-hidden select-none"
+      className="relative w-full py-16 sm:py-24 lg:py-32 px-5 sm:px-8 lg:px-16 xl:px-20 bg-[#050608] text-white select-none"
     >
-      {/* Luz ambiente suave de fundo (radial-gradient puro sem blur filter para evitar artefatos de listra GPU) */}
-      <div 
-        className="absolute inset-0 bg-[radial-gradient(ellipse_700px_450px_at_50%_50%,rgba(184,255,0,0.035),transparent_70%)] pointer-events-none"
-        aria-hidden="true"
-      />
-
       <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col gap-8 sm:gap-10 lg:gap-14">
         
         {/* CABEÇALHO DIRETO E LIMPO */}

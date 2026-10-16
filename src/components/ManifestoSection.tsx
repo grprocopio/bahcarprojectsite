@@ -25,13 +25,8 @@ export const ManifestoSection: React.FC = () => {
     <section
       id="manifesto"
       ref={sectionRef}
-      className="relative w-full py-16 sm:py-24 lg:py-32 px-5 sm:px-10 lg:px-16 xl:px-20 bg-[#050608] text-white flex items-center justify-center select-none touch-pan-y scroll-mt-12"
+      className="relative w-full py-16 sm:py-20 lg:py-24 px-5 sm:px-10 lg:px-16 xl:px-20 bg-[#050608] text-white flex items-center justify-center select-none touch-pan-y scroll-mt-12"
     >
-      {/* Luz ambiente suave de transição */}
-      <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_650px_380px_at_50%_50%,rgba(184,255,0,0.04),transparent_70%)] pointer-events-none"
-        aria-hidden="true"
-      />
 
       <div
         className={`relative z-10 w-full max-w-6xl mx-auto text-left transition-all duration-700 ease-out transform ${

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Check, Percent, Smartphone } from 'lucide-react';
+import { X, Check, Smartphone } from 'lucide-react';
 
 interface PartnerModalProps {
   isOpen: boolean;
@@ -27,14 +27,8 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({ isOpen, onClose }) =
         </button>
 
         <div>
-          {/* Badge de Status */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#B8FF00]/10 border border-[#B8FF00]/30 text-[#B8FF00] text-[11px] font-mono tracking-widest uppercase mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B8FF00] animate-pulse" />
-            <span>Motorista Parceiro · Santa Maria</span>
-          </div>
-
           <h3 
-            className="text-2xl sm:text-3xl font-black italic uppercase text-white tracking-tight leading-tight"
+            className="text-2xl sm:text-3xl font-black italic uppercase text-white tracking-tight leading-tight pr-6"
             style={{ fontFamily: "'Kanit', sans-serif" }}
           >
             Aplicativo será lançado em breve
@@ -46,13 +40,6 @@ export const PartnerModal: React.FC<PartnerModalProps> = ({ isOpen, onClose }) =
 
           {/* Destaques visuais informativos */}
           <div className="mt-6 space-y-2.5">
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 text-xs text-neutral-300">
-              <div className="w-7 h-7 rounded-lg bg-[#B8FF00]/10 flex items-center justify-center text-[#B8FF00] shrink-0 font-bold">
-                <Percent className="w-4 h-4" />
-              </div>
-              <span>Taxa fixa garantida de <strong>apenas 16%</strong> (o resto é seu)</span>
-            </div>
-
             <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 text-xs text-neutral-300">
               <div className="w-7 h-7 rounded-lg bg-[#B8FF00]/10 flex items-center justify-center text-[#B8FF00] shrink-0">
                 <Smartphone className="w-4 h-4" />

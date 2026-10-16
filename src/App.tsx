@@ -22,7 +22,7 @@ export default function App() {
       {/* Navbar Oficial */}
       <Navbar onOpenPartner={() => setPartnerModalOpen(true)} />
 
-      <main className="relative z-10">
+      <main className="relative z-10 bg-[#050608]">
         {/* Hero Oficial com vídeo e canplaythrough */}
         <Hero />
 
