@@ -74,7 +74,7 @@ export const Hero: React.FC<HeroProps> = () => {
             ref={imageRef}
             src="/carromate.jpg"
             alt="BahCar Mobilidade"
-            className="w-full h-full object-cover object-center select-none"
+            className="w-full h-full object-cover object-center select-none transform-gpu will-change-[transform,opacity]"
             style={{
               imageRendering: '-webkit-optimize-contrast',
             }}

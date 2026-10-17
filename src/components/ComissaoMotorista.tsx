@@ -109,7 +109,9 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
         {/* CONTAINER DO SIMULADOR EM DESIGN GLASSMORPHISM */}
         <div
           ref={cockpitRef}
-          className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0c0e14] border border-white/12 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.85)] p-5 sm:p-8 lg:p-12 overflow-hidden"
+          className={`relative w-full rounded-2xl sm:rounded-3xl bg-[#0c0e14] border border-white/12 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.85)] p-5 sm:p-8 lg:p-12 overflow-hidden scroll-reveal scroll-reveal-delay-1 ${
+            cockpitVisible ? 'is-revealed' : ''
+          }`}
           style={{
             backgroundColor: '#0c0e14',
             backgroundImage: 'radial-gradient(ellipse 800px 400px at 50% 0%, rgba(255, 255, 255, 0.04), transparent 70%)',

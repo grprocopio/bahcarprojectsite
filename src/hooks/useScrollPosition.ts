@@ -69,7 +69,7 @@ interface UseScrollRevealOptions {
 export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
   options: UseScrollRevealOptions = {}
 ): [RefObject<T | null>, boolean] {
-  const { threshold = 0.02, rootMargin = '0px 0px 60px 0px', triggerOnce = true } = options;
+  const { threshold = 0.05, rootMargin = '0px 0px -45px 0px', triggerOnce = true } = options;
   const ref = useRef<T | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -77,9 +77,9 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
     const el = ref.current;
     if (!el) return;
 
-    // Se o elemento já estiver na viewport inicial (topo da página), revela imediatamente
+    // Se o elemento estiver no primeiro terço visível da tela no carregamento, mostra direto
     const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight * 0.95 && rect.bottom > 0) {
+    if (rect.top < window.innerHeight * 0.55 && rect.bottom > 0) {
       setIsVisible(true);
       if (triggerOnce) return;
     }

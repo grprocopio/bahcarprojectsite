@@ -116,34 +116,69 @@ h1, h2, h3, h4, h5, h6, p, span, button {
   }
 }
 
+@keyframes drive-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(22px) scale(0.99) translateZ(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1) translateZ(0);
+  }
+}
+
+@keyframes drive-in-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-22px) scale(0.99) translateZ(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1) translateZ(0);
+  }
+}
+
 .animate-drive-in-right {
-  animation: drive-in-right 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: drive-in-right 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
 .animate-drive-in-left {
-  animation: drive-in-left 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: drive-in-left 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
-/* Scroll reveal fluido e ágil (sem longas esperas) */
+/* Scroll reveal suave, orgânico e com aceleração por hardware (GPU) */
 .scroll-reveal {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(22px) translateZ(0);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+  backface-visibility: hidden;
 }
 
 .scroll-reveal.is-revealed {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) translateZ(0);
 }
 
 .scroll-reveal-delay-1 {
-  transition-delay: 0.08s;
+  transition-delay: 0.1s;
 }
 
 .scroll-reveal-delay-2 {
-  transition-delay: 0.14s;
+  transition-delay: 0.18s;
 }
 
 .scroll-reveal-delay-3 {
-  transition-delay: 0.2s;
+  transition-delay: 0.28s;
+}
+
+/* Respeito a usuários com preferência de movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
