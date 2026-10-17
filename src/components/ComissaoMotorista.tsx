@@ -10,20 +10,25 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
   const [cockpitRef, cockpitVisible] = useScrollReveal<HTMLDivElement>({ threshold: 0.05 });
 
   const [rideValue, setRideValue] = useState<number>(35);
+  const [simulationMode, setSimulationMode] = useState<'single' | 'monthly'>('single');
   const trackRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef<boolean>(false);
 
   const minVal = 10;
   const maxVal = 100;
+  const monthlyRides = 120; // Média estimada de 4 corridas/dia em 30 dias
 
   const bahcarRate = 0.16;
   const competitorRate = 0.35;
 
-  const bahcarCommission = rideValue * bahcarRate;
-  const bahcarNet = rideValue - bahcarCommission;
+  const multiplier = simulationMode === 'monthly' ? monthlyRides : 1;
+  const grossValue = rideValue * multiplier;
 
-  const competitorCommission = rideValue * competitorRate;
-  const competitorNet = rideValue - competitorCommission;
+  const bahcarCommission = grossValue * bahcarRate;
+  const bahcarNet = grossValue - bahcarCommission;
+
+  const competitorCommission = grossValue * competitorRate;
+  const competitorNet = grossValue - competitorCommission;
 
   const fillPercent = Math.max(0, Math.min(100, ((rideValue - minVal) / (maxVal - minVal)) * 100));
 
@@ -73,6 +78,8 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
     }
   };
 
+  const quickPresets = [20, 35, 50, 75, 100];
+
   return (
     <section
       id="comissao-clara"
@@ -99,7 +106,7 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
           </p>
         </div>
 
-        {/* CONTAINER DO SIMULADOR EM DESIGN GLASSMORPHISM (100% protegido contra tela branca) */}
+        {/* CONTAINER DO SIMULADOR EM DESIGN GLASSMORPHISM */}
         <div
           ref={cockpitRef}
           className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0c0e14] border border-white/12 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.85)] p-5 sm:p-8 lg:p-12 overflow-hidden"
@@ -108,7 +115,7 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
             backgroundImage: 'radial-gradient(ellipse 800px 400px at 50% 0%, rgba(255, 255, 255, 0.04), transparent 70%)',
           }}
         >
-          {/* Brilho interno do vidro através de degradês radiais puros (sem filter: blur para garantir 0 bugs de GPU) */}
+          {/* Brilho interno do vidro */}
           <div 
             className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[radial-gradient(circle,rgba(184,255,0,0.08)_0%,transparent_70%)] pointer-events-none" 
             aria-hidden="true" 
@@ -118,11 +125,11 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
             aria-hidden="true" 
           />
 
-          {/* Barra Superior do Ajuste de Valor */}
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 sm:pb-8 border-b border-white/10">
+          {/* Barra Superior com Seletor de Modo (Por Corrida vs Mensal) */}
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5 pb-6 sm:pb-8 border-b border-white/10">
             <div>
-              <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-neutral-400 block mb-1">
-                Simulador de Rendimento
+              <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-[#B8FF00] block mb-1">
+                Simulador de Rendimento Real
               </span>
               <h3
                 className="text-xl sm:text-2xl md:text-3xl font-black italic uppercase text-white"
@@ -132,10 +139,36 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
               </h3>
             </div>
 
+            {/* Alternador de Modo de Simulação */}
+            <div className="flex items-center gap-2 p-1 rounded-xl bg-white/[0.05] border border-white/10 self-start md:self-auto">
+              <button
+                type="button"
+                onClick={() => setSimulationMode('single')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
+                  simulationMode === 'single'
+                    ? 'bg-[#B8FF00] text-black shadow-md'
+                    : 'text-neutral-400 hover:text-white'
+                }`}
+              >
+                Por Corrida
+              </button>
+              <button
+                type="button"
+                onClick={() => setSimulationMode('monthly')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
+                  simulationMode === 'monthly'
+                    ? 'bg-[#B8FF00] text-black shadow-md'
+                    : 'text-neutral-400 hover:text-white'
+                }`}
+              >
+                Mês (120 viagens)
+              </button>
+            </div>
+
             {/* Display do Valor no Vidro Fosco */}
-            <div className="self-start sm:self-auto flex items-center gap-2.5 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-2xl bg-[#10131c]/85 backdrop-blur-md border border-white/15">
+            <div className="self-start md:self-auto flex items-center gap-2.5 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-2xl bg-[#10131c]/85 backdrop-blur-md border border-white/15">
               <span className="font-mono text-[11px] sm:text-xs text-neutral-400 uppercase tracking-wider">
-                Valor:
+                {simulationMode === 'monthly' ? 'Média/Corrida:' : 'Valor:'}
               </span>
               <span
                 className="text-2xl sm:text-3xl md:text-4xl font-black font-mono text-[#B8FF00] drop-shadow-[0_0_12px_rgba(184,255,0,0.35)] tabular-nums"
@@ -184,6 +217,27 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
                 aria-label="Simular valor da corrida"
               />
             </div>
+
+            {/* Presets Rápidos */}
+            <div className="flex items-center justify-between gap-2 pt-1 flex-wrap">
+              <span className="text-[11px] font-mono text-neutral-400">Atalhos rápidos:</span>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                {quickPresets.map((val) => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => setRideValue(val)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-mono font-medium border transition-all cursor-pointer ${
+                      rideValue === val
+                        ? 'bg-[#B8FF00]/15 text-[#B8FF00] border-[#B8FF00]/40'
+                        : 'bg-white/[0.03] text-neutral-400 border-white/5 hover:text-white hover:border-white/20'
+                    }`}
+                  >
+                    R$ {val}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* CARDS COMPARATIVOS EM GLASSMORPHISM ESCURO */}
@@ -197,7 +251,6 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
               <div>
                 <div className="flex items-center justify-between pb-3.5 sm:pb-4 border-b border-[#B8FF00]/20 mb-3 sm:mb-4">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#B8FF00] shadow-[0_0_8px_rgba(184,255,0,0.9)]" />
                     <span
                       className="text-base sm:text-lg font-black italic uppercase text-white tracking-wide"
                       style={{ fontFamily: "'Kanit', sans-serif" }}
@@ -212,7 +265,7 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
 
                 <div className="py-1 sm:py-2">
                   <span className="text-[11px] sm:text-xs uppercase font-mono tracking-wider text-neutral-400 block mb-1">
-                    Você recebe líquido por viagem:
+                    {simulationMode === 'monthly' ? 'Você recebe líquido no mês:' : 'Você recebe líquido por viagem:'}
                   </span>
                   <div
                     className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black italic text-[#B8FF00] drop-shadow-[0_0_20px_rgba(184,255,0,0.35)] tabular-nums"
@@ -224,7 +277,7 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
               </div>
 
               <div className="mt-5 sm:mt-6 pt-3.5 sm:pt-4 border-t border-white/10 flex items-center justify-between font-mono text-[11px] sm:text-xs text-neutral-300">
-                <span>Taxa da plataforma (16%):</span>
+                <span>Taxa retida pela BahCar (16%):</span>
                 <span className="text-white font-bold tabular-nums">R$ {formatBRL(bahcarCommission)}</span>
               </div>
             </div>
@@ -237,7 +290,6 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
               <div>
                 <div className="flex items-center justify-between pb-3.5 sm:pb-4 border-b border-white/10 mb-3 sm:mb-4">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-neutral-600" />
                     <span
                       className="text-base sm:text-lg font-bold italic uppercase text-neutral-300 tracking-wide"
                       style={{ fontFamily: "'Kanit', sans-serif" }}
@@ -246,13 +298,13 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
                     </span>
                   </div>
                   <span className="text-[11px] sm:text-xs font-mono font-medium text-neutral-400 uppercase tracking-wider">
-                    Até 35% retenção
+                    Até 35% de corte
                   </span>
                 </div>
 
                 <div className="py-1 sm:py-2">
                   <span className="text-[11px] sm:text-xs uppercase font-mono tracking-wider text-neutral-500 block mb-1">
-                    Você receberia apenas:
+                    {simulationMode === 'monthly' ? 'Você receberia apenas:' : 'Você receberia apenas:'}
                   </span>
                   <div
                     className="text-3xl sm:text-4xl md:text-5xl font-black italic text-neutral-400 tabular-nums"
@@ -264,7 +316,7 @@ export const ComissaoMotorista: React.FC<ComissaoMotoristaProps> = () => {
               </div>
 
               <div className="mt-5 sm:mt-6 pt-3.5 sm:pt-4 border-t border-white/10 flex items-center justify-between font-mono text-[11px] sm:text-xs text-neutral-400">
-                <span>Desconto de terceiros (~35%):</span>
+                <span>Desconto cobrado por outros (~35%):</span>
                 <span className="text-neutral-300 font-semibold tabular-nums">R$ {formatBRL(competitorCommission)}</span>
               </div>
             </div>

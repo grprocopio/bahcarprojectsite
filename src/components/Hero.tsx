@@ -116,7 +116,7 @@ export const Hero: React.FC<HeroProps> = () => {
               Pessoas movem
             </span>
             <span className="text-white block pb-1">
-              a cidade.
+              a cidade<span className="inline-block pl-[0.16em]">.</span>
             </span>
             <div className="mt-2 flex items-baseline flex-wrap gap-x-3 sm:gap-x-4">
               <span className="text-white">

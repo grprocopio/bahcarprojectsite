@@ -284,15 +284,13 @@ export const Modalities: React.FC = () => {
               </span>
             </div>
 
-            {/* Destaques rápidos lado a lado */}
-            <div className="flex flex-row items-center gap-1.5 sm:gap-2.5 flex-wrap shrink-0">
+            {/* Destaques sem pílulas artificiais (Zero-Pill discipline) */}
+            <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-neutral-300 flex-wrap shrink-0">
               {currentModality.highlights.map((h, i) => (
-                <span
-                  key={i}
-                  className="whitespace-nowrap shrink-0 px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-[#111420]/80 border border-white/10 text-neutral-200"
-                >
-                  {h}
-                </span>
+                <React.Fragment key={i}>
+                  {i > 0 && <span className="text-[#B8FF00]/60 font-bold" aria-hidden="true">·</span>}
+                  <span>{h}</span>
+                </React.Fragment>
               ))}
             </div>
           </div>
