@@ -35,7 +35,7 @@ export const FinalCta: React.FC<FinalCtaProps> = ({ onOpenLaunch, onOpenPartner 
           Um ecossistema local feito para valorizar de verdade quem dirige e oferecer aos passageiros a resposta mais rápida e segura de Santa Maria.
         </p>
 
-        {/* Botões de Ação Clean: Motorista e Passageiro */}
+        {/* Botões de Ação: Motorista e Passageiro */}
         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto">
           <button
             onClick={onOpenPartner}
