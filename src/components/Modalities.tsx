@@ -63,7 +63,6 @@ const MODALITIES_LIST: ModalityItem[] = [
     models: [
       'Corolla',
       'Creta',
-      'BYD Dolphin',
       'Tracker',
       'Sentra 25/26',
       'Duster 24/25/26',
